@@ -6,6 +6,14 @@ given the sequence, network, and context surrounding it — risky, even when the
 action itself looks completely legitimate?" It intervenes in the seconds
 *before* a transfer or trade is confirmed, not after.
 
+A brand-new user spends their first 10 transactions in a **calibration phase**
+(genuine usage, no risk verdict shown) while Latchpoint builds their personal
+pattern; once calibrated, every transaction is checked against that pattern in
+real time — combining transaction history, session behavior, device/network
+signals, and behavioral biometrics (mouse movement, click/touch patterns,
+keystroke timing, hover-before-confirm hesitation, and location) — with the
+analysis itself shown live, stage by stage, before the verdict.
+
 ## One-time setup
 
 ```bash
