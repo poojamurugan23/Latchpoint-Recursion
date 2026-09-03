@@ -21,6 +21,14 @@ function getDeviceFingerprint() {
 
 export const deviceFingerprint = getDeviceFingerprint()
 
+// In-memory only, like sessionId — resets per tab load. Tracks whether the
+// custom location-consent prompt has already been shown/answered this
+// session so it doesn't reappear on every page.
+export let geoConsentAsked = false
+export function markGeoConsentAsked() {
+  geoConsentAsked = true
+}
+
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY)
 }
