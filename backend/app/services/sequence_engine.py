@@ -99,7 +99,7 @@ def analyze_sequence(events: list[dict[str, Any]] | list[Any]) -> tuple[float, l
         confirm_idx = types.index("confirm_requested")
         if confirm_idx > 0 and len(durations) >= confirm_idx:
             prior_step_duration = durations[confirm_idx - 1]
-            if prior_step_duration < 2.5:
+            if 0 < prior_step_duration < 2.5:
                 rapid_completion = True
 
     # 4. Synthesize risk score

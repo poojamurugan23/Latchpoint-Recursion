@@ -7,6 +7,7 @@ from slowapi.errors import RateLimitExceeded
 from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app import models  # noqa: F401 - ensures all models are registered on Base
+from app.rate_limit import limiter
 from app.routers import auth, users, payees, transactions, events, risk, cases, kpi, admin
 from app.error_handling import register_exception_handlers
 

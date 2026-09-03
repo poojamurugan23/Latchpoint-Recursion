@@ -1,6 +1,6 @@
 """Automated test suite verifying Latchpoint Risk Fusion, ML Models, and Admin APIs."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from app.database import SessionLocal
 from app.ml import behavior_model
 from app.services import sequence_engine, network_engine, risk_fusion, replay_service
@@ -52,13 +52,14 @@ def test_behavioral_model():
 
 def test_sequence_engine():
     """Validates sequence journey transition scoring."""
+    now = datetime.now(timezone.utc)
     clean_events = [
-        {"event_type": "login", "created_at": datetime.now(timezone.utc)},
-        {"event_type": "dashboard_view", "created_at": datetime.now(timezone.utc)},
-        {"event_type": "balance_view", "created_at": datetime.now(timezone.utc)},
-        {"event_type": "transfer_started", "created_at": datetime.now(timezone.utc)},
-        {"event_type": "transfer_reviewed", "created_at": datetime.now(timezone.utc)},
-        {"event_type": "confirm_requested", "created_at": datetime.now(timezone.utc)},
+        {"event_type": "login", "created_at": now - timedelta(seconds=50)},
+        {"event_type": "dashboard_view", "created_at": now - timedelta(seconds=40)},
+        {"event_type": "balance_view", "created_at": now - timedelta(seconds=30)},
+        {"event_type": "transfer_started", "created_at": now - timedelta(seconds=20)},
+        {"event_type": "transfer_reviewed", "created_at": now - timedelta(seconds=10)},
+        {"event_type": "confirm_requested", "created_at": now},
     ]
     score_clean, _, _ = sequence_engine.analyze_sequence(clean_events)
     assert score_clean <= 25.0, f"Expected clean sequence score <= 25, got {score_clean}"
