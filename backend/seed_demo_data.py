@@ -113,9 +113,9 @@ def main():
         print()
         print("Live demo scenarios to run through the UI:")
         print(f"  CLEAN:       transfer ~₹1,900 to '{payee_rent.name}' -> expect ALLOW")
-        print(f"  DRIFT:       transfer ~₹5,500 to '{payee_rent.name}' (4th transfer today) -> expect HOLD")
-        print(f"  NETWORK:     transfer ~₹3,500 to '{payee_network_target.name}' -> expect VERIFY/HOLD")
-        print(f"  REPEAT-LOSS: trade ~₹9,500 on symbol '{loss_symbol}' -> expect BLOCK")
+        print(f"  DRIFT:       transfer ~₹2,700 to '{payee_rent.name}' (4th transfer today) -> expect HOLD")
+        print(f"  NETWORK:     transfer ~₹3,500 to '{payee_network_target.name}' -> expect VERIFY/HOLD/BLOCK")
+        print(f"  REPEAT-LOSS: trade ~₹12,000 on symbol '{loss_symbol}' -> expect BLOCK")
     finally:
         db.close()
 
