@@ -18,6 +18,9 @@ def _user_out(user: User, db: Session) -> dict:
         "email": user.email,
         "created_at": user.created_at,
         "balance": account.balance if account else 0.0,
+        "calibration_status": user.calibration_status,
+        "calibrated_txn_count": user.calibrated_txn_count,
+        "baseline_snapshot": user.baseline_snapshot,
     }
 
 

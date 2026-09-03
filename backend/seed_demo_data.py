@@ -14,6 +14,7 @@ from app.models.payee import Payee
 from app.models.device import Device
 from app.models.transaction import Transaction
 from app.security import hash_password
+from app.services.feature_engine import materialize_baseline_snapshot
 
 DEMO_EMAIL = "demo@latchpoint.app"
 DEMO_PASSWORD = "demo1234"

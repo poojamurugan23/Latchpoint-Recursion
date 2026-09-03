@@ -412,6 +412,24 @@ class CommitmentContextBuilder:
         }
 
 
+def materialize_baseline_snapshot(db: Session, user_id: int) -> dict:
+    """Called once when calibration completes (Phase 3 §1.4). A JSON-safe
+    snapshot of "what we learned about you" — a reference artifact for
+    display, not the live scoring input (which keeps using the rolling
+    window)."""
+    recent = get_recent_completed_transactions(db, user_id, txn_type=None, limit=WINDOW_SIZE)
+    if not recent:
+        return {}
+    baseline = compute_personal_baseline(recent)
+    return {
+        "mean_amount": round(baseline["mean_amount"], 2),
+        "std_amount": round(baseline["std_amount"], 2),
+        "typical_entities": sorted(str(e) for e in baseline["typical_entities"]),
+        "typical_hour_range": list(baseline["typical_hour_range"]),
+        "typical_gap_days": round(baseline["typical_gap_days"], 2),
+    }
+
+
 def build_commitment_context(
     db: Session,
     user_id: int,
