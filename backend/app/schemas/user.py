@@ -11,3 +11,4 @@ class UserOut(BaseModel):
     email: str
     created_at: datetime
     balance: float = 0.0
+    is_demo: bool = False

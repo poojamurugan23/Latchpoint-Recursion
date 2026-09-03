@@ -7,6 +7,8 @@ from app.models.account import Account
 from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
 from app.security import hash_password, verify_password, create_access_token
 
+DEMO_EMAIL = "demo@latchpoint.app"
+
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
@@ -18,6 +20,7 @@ def _user_out(user: User, db: Session) -> dict:
         "email": user.email,
         "created_at": user.created_at,
         "balance": account.balance if account else 0.0,
+        "is_demo": user.email == DEMO_EMAIL,
     }
 
 
@@ -46,6 +49,19 @@ def login(body: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email).first()
     if not user or not verify_password(body.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid email or password")
+
+    token = create_access_token(user.id)
+    return TokenResponse(token=token, user=_user_out(user, db))
+
+
+@router.post("/demo-login", response_model=TokenResponse)
+def demo_login(db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == DEMO_EMAIL).first()
+    if not user:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            "Demo user not found — run seed_demo_data.py first",
+        )
 
     token = create_access_token(user.id)
     return TokenResponse(token=token, user=_user_out(user, db))

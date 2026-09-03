@@ -9,6 +9,8 @@ from app.security import get_current_user
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
+DEMO_EMAIL = "demo@latchpoint.app"
+
 
 @router.get("/me", response_model=UserOut)
 def get_me(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -19,4 +21,5 @@ def get_me(current_user: User = Depends(get_current_user), db: Session = Depends
         email=current_user.email,
         created_at=current_user.created_at,
         balance=account.balance if account else 0.0,
+        is_demo=current_user.email == DEMO_EMAIL,
     )
