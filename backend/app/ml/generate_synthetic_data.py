@@ -203,6 +203,45 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
             t += 1
             continue
 
+        # --- BUSY BUT CLEAN: 4-5 same-day normal-amount txns, all label 0.
+        # Without this, "4+ transactions today" alone becomes spuriously
+        # correlated with risk, since only drift bursts ever reach that count
+        # elsewhere in the synthetic data. ---
+        if baseline_n >= 3 and 0.32 <= pattern_roll < 0.42 and t + 4 < n_txns:
+            busy_day = day
+            for _ in range(random.randint(4, 5)):
+                amt = max(20.0, np.random.normal(personal_mean, personal_std * 0.7))
+                hour = random.randint(hour_low, hour_high)
+                day_totals[busy_day] = day_totals.get(busy_day, 0.0) + amt
+                day_counts[busy_day] = day_counts.get(busy_day, 0) + 1
+                rows.append(
+                    make_row(
+                        deviation_ratio=(amt - personal_mean) / personal_std,
+                        is_new_payee=0,
+                        is_odd_hour=int(not (hour_low - 2 <= hour <= hour_high + 2)),
+                        baseline_confidence_score=confidence_score,
+                        exposure_today=day_totals[busy_day],
+                        exposure_vs_baseline_ratio=day_totals[busy_day] / max(personal_mean, 1.0),
+                        txn_count_today=day_counts[busy_day],
+                        pause_count=random.randint(0, 2),
+                        edit_count=random.randint(0, 2),
+                        back_navigation_count=random.randint(0, 1),
+                        time_in_flow_sec=random.uniform(15, 60),
+                        device_shared_with_other_payees_count=0,
+                        recipient_is_new_device_pairing=0,
+                        ip_is_vpn_or_proxy=0,
+                        repeat_pattern_negative_outcome=0,
+                        prior_negative_outcome_streak=0,
+                        label=0,
+                    )
+                )
+                history.append(
+                    {"amount": amt, "hour": hour, "payee_id": random.choice(payee_ids), "day": busy_day}
+                )
+                t += 1
+            day += random.randint(1, 4)
+            continue
+
         # --- CLEAN transaction ---
         if loss_payee is not None and random.random() < 0.5:
             payee_id = loss_payee
