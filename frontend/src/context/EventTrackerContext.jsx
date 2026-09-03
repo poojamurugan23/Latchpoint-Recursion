@@ -31,6 +31,33 @@ export function EventTrackerProvider({ children }) {
     })
   }, [])
 
+  // Geolocation is sent immediately (not batched) so the session's
+  // lat/lng lands before any risk evaluation that depends on it.
+  const captureGeolocation = useCallback(() => {
+    if (!navigator.geolocation) return Promise.resolve(false)
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const event = {
+            session_id: sessionId,
+            transaction_id: null,
+            event_type: 'geolocation_captured',
+            payload: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              source: 'gps',
+            },
+          }
+          api.post('/events', event).catch(() => {})
+          resolve(true)
+        },
+        () => resolve(false),
+        { timeout: 5000, maximumAge: 300000 }
+      )
+    })
+  }, [])
+
   useEffect(() => {
     const interval = setInterval(flush, FLUSH_INTERVAL_MS)
     const onUnload = () => flush()
@@ -53,7 +80,7 @@ export function EventTrackerProvider({ children }) {
   }, [flush, trackEvent])
 
   return (
-    <EventTrackerContext.Provider value={{ trackEvent }}>
+    <EventTrackerContext.Provider value={{ trackEvent, captureGeolocation }}>
       {children}
     </EventTrackerContext.Provider>
   )
