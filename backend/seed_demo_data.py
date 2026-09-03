@@ -1,13 +1,12 @@
-"""Seeds the Latchpoint demo user and the 3 required demo scenarios (spec §11).
+"""Seeds demo user and scenario data (spec §11).
 
-Idempotent: skips seeding if the demo user already exists.
-Run from backend/: python seed_demo_data.py
+Idempotent: if demo@latchpoint.app already exists, skips gracefully. Run any
+time with:
+    python seed_demo_data.py
 """
 
-from datetime import datetime, timedelta, timezone
-
-from app.database import Base, engine, SessionLocal
-from app import models  # noqa: F401
+from datetime import datetime, timezone, timedelta
+from app.database import SessionLocal
 from app.models.user import User
 from app.models.account import Account
 from app.models.payee import Payee
@@ -20,51 +19,59 @@ DEMO_EMAIL = "demo@latchpoint.app"
 DEMO_PASSWORD = "demo1234"
 
 
-def _completed_txn(user_id, type_, amount, payee_id=None, symbol=None, days_ago=0, hour=10, outcome=None):
-    created_at = datetime.now(timezone.utc) - timedelta(days=days_ago)
-    created_at = created_at.replace(hour=hour, minute=0, second=0, microsecond=0)
+def _completed_txn(user_id, txn_type, amount, payee_id=None, symbol=None, days_ago=0, hour=12, outcome="neutral"):
+    created = datetime.now(timezone.utc) - timedelta(days=days_ago)
+    created = created.replace(hour=hour, minute=0, second=0, microsecond=0)
     return Transaction(
         user_id=user_id,
-        type=type_,
+        type=txn_type,
         amount=amount,
         payee_id=payee_id,
         symbol=symbol,
         status="completed",
+        decision="ALLOW",
         outcome=outcome,
-        created_at=created_at,
-        confirmed_at=created_at,
+        created_at=created,
+        confirmed_at=created + timedelta(seconds=20),
     )
 
 
 def main():
-    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         existing = db.query(User).filter(User.email == DEMO_EMAIL).first()
         if existing:
-            print(f"Demo user {DEMO_EMAIL} already exists (id={existing.id}) — skipping seed.")
+            print(f"Demo user {DEMO_EMAIL} already exists — skipping seed.")
             return
 
-        user = User(name="Demo User", email=DEMO_EMAIL, password_hash=hash_password(DEMO_PASSWORD))
+        user = User(
+            name="Demo User",
+            email=DEMO_EMAIL,
+            password_hash=hash_password(DEMO_PASSWORD),
+        )
         db.add(user)
         db.flush()
 
-        db.add(Account(user_id=user.id, balance=250000.0, account_type="checking"))
-        db.add(Account(user_id=user.id, balance=100000.0, account_type="trading"))
-
-        # --- regular payees (form the clean personal baseline) ---
-        payee_rent = Payee(user_id=user.id, name="Rent - Sunview Apartments", masked_account_number="****4471", is_trusted=True)
-        payee_utilities = Payee(user_id=user.id, name="City Power & Utilities", masked_account_number="****2290", is_trusted=True)
-        payee_groceries = Payee(user_id=user.id, name="FreshMart Groceries", masked_account_number="****8823", is_trusted=True)
-        payee_internet = Payee(user_id=user.id, name="FiberNet Broadband", masked_account_number="****3360", is_trusted=True)
-        db.add_all([payee_rent, payee_utilities, payee_groceries, payee_internet])
+        checking = Account(user_id=user.id, balance=250000.0, account_type="checking")
+        db.add(checking)
         db.flush()
 
-        # --- 10 clean historical transactions -> baseline_confidence: high ---
-        regulars = [payee_rent, payee_utilities, payee_groceries]
-        for i in range(10):
-            payee = regulars[i % len(regulars)]
-            amount = 1800 + (i % 3) * 250
+        # Regular payees
+        payee_rent = Payee(user_id=user.id, name="Rent - Sunview Apartments", masked_account_number="****4812", is_trusted=True)
+        payee_internet = Payee(user_id=user.id, name="FiberNet Broadband", masked_account_number="****2209", is_trusted=True)
+        payee_groceries = Payee(user_id=user.id, name="FreshMart Groceries", masked_account_number="****6701", is_trusted=True)
+        payee_utilities = Payee(user_id=user.id, name="City Electric & Water", masked_account_number="****1143", is_trusted=True)
+
+        for p in [payee_rent, payee_internet, payee_groceries, payee_utilities]:
+            db.add(p)
+        db.flush()
+
+        # --- BASELINE: 10 clean transactions over the past 30 days (10:00 - 14:00, ₹1,800 - ₹3,500) ---
+        amounts = [1900, 2100, 1850, 2400, 2000, 3100, 1950, 2200, 2800, 2050]
+        payees = [payee_rent, payee_groceries, payee_internet, payee_utilities, payee_groceries,
+                  payee_rent, payee_groceries, payee_internet, payee_utilities, payee_rent]
+
+        for i, (amount, payee) in enumerate(zip(amounts, payees)):
             db.add(
                 _completed_txn(
                     user.id, "transfer", amount, payee_id=payee.id,
@@ -86,12 +93,18 @@ def main():
         db.add(payee_network_target)
         db.flush()
 
-        # --- REPEAT-LOSS scenario: 3 prior trades on the same symbol, all losses ---
-        loss_symbol = "ZYX"
+        # --- CONTEXT / REPEAT-LOSS scenario: 3 prior transfers to an entity resulting in loss/dispute ---
+        payee_context_target = Payee(
+            user_id=user.id, name="CryptoVault Transfers", masked_account_number="****8821",
+            is_trusted=False,
+        )
+        db.add(payee_context_target)
+        db.flush()
+
         for i in range(3):
             db.add(
                 _completed_txn(
-                    user.id, "trade", 8000 + i * 500, symbol=loss_symbol,
+                    user.id, "transfer", 7000 + i * 500, payee_id=payee_context_target.id,
                     days_ago=12 - i * 3, hour=11, outcome="loss",
                 )
             )
@@ -126,8 +139,8 @@ def main():
         print(f"  CLEAN 1:     transfer ~₹1,900 to '{payee_rent.name}' -> expect ALLOW")
         print(f"  CLEAN 2:     transfer ~₹900 to '{payee_internet.name}' -> expect ALLOW")
         print(f"  DRIFT:       transfer ~₹2,700 to '{payee_rent.name}' (4th transfer today) -> expect HOLD")
-        print(f"  NETWORK:     transfer ~₹3,500 to '{payee_network_target.name}' -> expect VERIFY/HOLD/BLOCK")
-        print(f"  REPEAT-LOSS: trade ~₹12,000 on symbol '{loss_symbol}' -> expect BLOCK")
+        print(f"  NETWORK:     transfer ~₹3,500 to '{payee_network_target.name}' -> expect VERIFY")
+        print(f"  CONTEXT:     transfer ~₹12,000 to '{payee_context_target.name}' -> expect BLOCK")
     finally:
         db.close()
 
