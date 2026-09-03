@@ -1,24 +1,16 @@
-import { forwardRef } from 'react'
+import { forwardRef } from "react";
 
 const VARIANTS = {
-  primary:
-    'bg-accent text-white hover:bg-accent-hover',
+  primary: "bg-accent text-white hover:bg-accent-hover",
   secondary:
-    'bg-transparent text-ink-900 border border-border hover:bg-bg-subtle',
-  tertiary:
-    'bg-transparent text-accent hover:opacity-80 border-0',
-  danger:
-    'bg-transparent text-block border border-border hover:bg-block-bg',
-}
+    "bg-transparent text-ink-900 border border-border hover:bg-bg-subtle",
+  tertiary: "bg-transparent text-accent hover:opacity-80 border-0",
+  danger: "bg-transparent text-block border border-border hover:bg-block-bg",
+};
 
 const Button = forwardRef(function Button(
-  {
-    variant = 'primary',
-    className = '',
-    children,
-    ...props
-  },
-  ref
+  { variant = "primary", className = "", children, ...props },
+  ref,
 ) {
   return (
     <button
@@ -28,7 +20,7 @@ const Button = forwardRef(function Button(
     >
       {children}
     </button>
-  )
-})
+  );
+});
 
-export default Button
+export default Button;

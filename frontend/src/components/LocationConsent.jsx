@@ -1,5 +1,5 @@
-import { MapPin } from 'lucide-react'
-import Button from './Button'
+import { MapPin } from "lucide-react";
+import Button from "./Button";
 
 /**
  * A calm, on-brand explanation shown BEFORE the real browser geolocation
@@ -18,18 +18,27 @@ export default function LocationConsent({ onAllow, onDismiss }) {
             Check session location?
           </p>
           <p className="text-caption text-ink-600 mb-4 leading-relaxed">
-            Helps Latchpoint recognize when a commitment is initiated from an anomalous geographic location. You can decline anytime.
+            Helps Latchpoint recognize when a commitment is initiated from an
+            anomalous geographic location. You can decline anytime.
           </p>
           <div className="flex gap-2.5">
-            <Button variant="primary" onClick={onAllow} className="text-caption py-1.5 px-3.5">
+            <Button
+              variant="primary"
+              onClick={onAllow}
+              className="text-caption py-1.5 px-3.5"
+            >
               Allow
             </Button>
-            <Button variant="secondary" onClick={onDismiss} className="text-caption py-1.5 px-3.5">
+            <Button
+              variant="secondary"
+              onClick={onDismiss}
+              className="text-caption py-1.5 px-3.5"
+            >
               Not now
             </Button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

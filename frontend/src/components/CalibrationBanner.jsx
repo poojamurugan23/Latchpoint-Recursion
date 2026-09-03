@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Sparkles } from "lucide-react";
 
 /**
  * Replaces the Pre-Commitment Gate while a user is still calibrating (Phase 3 §1.2).
@@ -16,10 +16,11 @@ export default function CalibrationBanner({ current, total = 10 }) {
           Building your pattern ({current}/{total})
         </h2>
         <p className="font-sans text-secondary text-ink-600 leading-relaxed">
-          This transaction is being processed normally. Once you complete {total} transactions,
-          Latchpoint will actively watch for activity that doesn't match your personal pattern.
+          This transaction is being processed normally. Once you complete{" "}
+          {total} transactions, Latchpoint will actively watch for activity that
+          doesn't match your personal pattern.
         </p>
       </div>
     </div>
-  )
+  );
 }

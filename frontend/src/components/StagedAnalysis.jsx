@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
-import { Check } from 'lucide-react'
-import { streamGet } from '../api/client'
+import { useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
+import { streamGet } from "../api/client";
 
 const STAGES = [
-  { key: 'baseline', label: 'Baseline' },
-  { key: 'sequence', label: 'Sequence' },
-  { key: 'network', label: 'Network' },
-  { key: 'context', label: 'Context' },
-  { key: 'behavioral', label: 'Behavior' },
-]
+  { key: "baseline", label: "Baseline" },
+  { key: "sequence", label: "Sequence" },
+  { key: "network", label: "Network" },
+  { key: "context", label: "Context" },
+  { key: "behavioral", label: "Behavior" },
+];
 
 /**
  * Shown the moment Confirm is clicked for a calibrated user.
@@ -16,22 +16,22 @@ const STAGES = [
  * and model computation visible as it happens (Phase 3 §4).
  */
 export default function StagedAnalysis({ transactionId, onVerdict, onError }) {
-  const [completed, setCompleted] = useState({})
-  const started = useRef(false)
+  const [completed, setCompleted] = useState({});
+  const started = useRef(false);
 
   useEffect(() => {
-    if (started.current) return
-    started.current = true
+    if (started.current) return;
+    started.current = true;
 
     streamGet(`/risk/evaluate-stream/${transactionId}`, ({ event, data }) => {
-      if (event === 'stage') {
-        setCompleted((prev) => ({ ...prev, [data.stage]: data.summary }))
-      } else if (event === 'verdict') {
-        onVerdict(data)
+      if (event === "stage") {
+        setCompleted((prev) => ({ ...prev, [data.stage]: data.summary }));
+      } else if (event === "verdict") {
+        onVerdict(data);
       }
-    }).catch((err) => onError?.(err))
+    }).catch((err) => onError?.(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactionId])
+  }, [transactionId]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4">
@@ -45,12 +45,14 @@ export default function StagedAnalysis({ transactionId, onVerdict, onError }) {
 
         <ul className="flex flex-col gap-4">
           {STAGES.map(({ key, label }) => {
-            const done = key in completed
+            const done = key in completed;
             return (
               <li key={key} className="flex items-start gap-3">
                 <span
                   className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0 transition-colors duration-150 ease-out ${
-                    done ? 'bg-accent text-white' : 'border border-border bg-white text-transparent'
+                    done
+                      ? "bg-accent text-white"
+                      : "border border-border bg-white text-transparent"
                   }`}
                 >
                   <Check size={12} strokeWidth={3} />
@@ -58,7 +60,7 @@ export default function StagedAnalysis({ transactionId, onVerdict, onError }) {
                 <div className="flex-1">
                   <p
                     className={`text-secondary transition-colors duration-150 ease-out ${
-                      done ? 'text-ink-900 font-medium' : 'text-ink-400'
+                      done ? "text-ink-900 font-medium" : "text-ink-400"
                     }`}
                   >
                     {label}
@@ -70,10 +72,10 @@ export default function StagedAnalysis({ transactionId, onVerdict, onError }) {
                   )}
                 </div>
               </li>
-            )
+            );
           })}
         </ul>
       </div>
     </div>
-  )
+  );
 }

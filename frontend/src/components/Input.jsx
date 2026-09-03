@@ -1,12 +1,18 @@
-import { forwardRef } from 'react'
+import { forwardRef } from "react";
 
-const Input = forwardRef(function Input({ label, className = '', id, ...props }, ref) {
-  const inputId = id || props.name
+const Input = forwardRef(function Input(
+  { label, className = "", id, ...props },
+  ref,
+) {
+  const inputId = id || props.name;
 
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-secondary font-medium text-ink-600">
+        <label
+          htmlFor={inputId}
+          className="text-secondary font-medium text-ink-600"
+        >
           {label}
         </label>
       )}
@@ -17,7 +23,7 @@ const Input = forwardRef(function Input({ label, className = '', id, ...props },
         {...props}
       />
     </div>
-  )
-})
+  );
+});
 
-export default Input
+export default Input;

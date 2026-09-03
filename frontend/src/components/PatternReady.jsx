@@ -1,5 +1,5 @@
-import { ShieldCheck } from 'lucide-react'
-import Button from './Button'
+import { ShieldCheck } from "lucide-react";
+import Button from "./Button";
 
 /**
  * Dedicated full-screen milestone on the 10th calibrating transaction (Phase 3 §1.3).
@@ -17,12 +17,13 @@ export default function PatternReady({ onContinue }) {
           Your pattern is ready.
         </h1>
         <p className="font-sans text-body text-ink-600 mb-8 leading-relaxed">
-          Latchpoint is now actively watching for activity that doesn't match your established pattern — before it becomes irreversible.
+          Latchpoint is now actively watching for activity that doesn't match
+          your established pattern — before it becomes irreversible.
         </p>
         <Button variant="primary" onClick={onContinue} className="px-6 py-3">
           Continue to Dashboard
         </Button>
       </div>
     </div>
-  )
+  );
 }
