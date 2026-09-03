@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import Layout from '../components/Layout'
@@ -8,12 +8,19 @@ import Button from '../components/Button'
 import Toast from '../components/Toast'
 import PreCommitmentGate from '../components/PreCommitmentGate'
 import StepUpModal from '../components/StepUpModal'
+import StagedAnalysis from '../components/StagedAnalysis'
+import CalibrationBanner from '../components/CalibrationBanner'
+import PatternReady from '../components/PatternReady'
+import LocationConsent from '../components/LocationConsent'
 import { useEventTracker } from '../context/EventTrackerContext'
-import { api } from '../api/client'
+import { useAuth } from '../context/AuthContext'
+import { api, geoConsentAsked, markGeoConsentAsked } from '../api/client'
+import BehavioralTracker from '../telemetry/BehavioralTracker'
 
 export default function Trade() {
   const navigate = useNavigate()
-  const { trackEvent } = useEventTracker()
+  const { trackEvent, captureGeolocation } = useEventTracker()
+  const { user, refreshUser } = useAuth()
 
   const [step, setStep] = useState('form')
   const [amount, setAmount] = useState('')
@@ -23,14 +30,41 @@ export default function Trade() {
   const [evaluation, setEvaluation] = useState(null)
   const [showToast, setShowToast] = useState(false)
   const [showStepUp, setShowStepUp] = useState(false)
+  const [showStagedAnalysis, setShowStagedAnalysis] = useState(false)
+  const [calibrationProgress, setCalibrationProgress] = useState(null)
+  const [showPatternReady, setShowPatternReady] = useState(false)
+  const [showLocationConsent, setShowLocationConsent] = useState(!geoConsentAsked)
   const [submitting, setSubmitting] = useState(false)
+
+  const trackerRef = useRef(null)
+  const amountInputRef = useRef(null)
+
+  if (!trackerRef.current) trackerRef.current = new BehavioralTracker(trackEvent)
 
   useEffect(() => {
     trackEvent('page_view', { path: '/trade' })
+    trackerRef.current.mount()
+    return () => trackerRef.current.unmount('leave')
   }, [])
+
+  useEffect(() => {
+    trackerRef.current.attachKeystrokeTiming(amountInputRef.current, 'amount')
+  }, [])
+
+  function handleAllowLocation() {
+    markGeoConsentAsked()
+    setShowLocationConsent(false)
+    captureGeolocation()
+  }
+
+  function handleDismissLocation() {
+    markGeoConsentAsked()
+    setShowLocationConsent(false)
+  }
 
   function handleReview(e) {
     e.preventDefault()
+    trackerRef.current.flush('form')
     setStep('review')
     trackEvent('review_reached')
   }
@@ -42,6 +76,7 @@ export default function Trade() {
 
   async function handleConfirm() {
     setSubmitting(true)
+    trackerRef.current.flush('review')
     try {
       const prep = await api.post('/transactions/prepare', {
         type: 'trade',
@@ -50,16 +85,32 @@ export default function Trade() {
       })
       setTransactionId(prep.transaction_id)
 
-      const result = await api.post(`/risk/evaluate/${prep.transaction_id}`)
-      setEvaluation(result)
-      trackEvent('gate_shown', { decision: result.decision }, prep.transaction_id)
-
-      if (result.decision === 'ALLOW') {
+      if (user.calibration_status === 'calibrating') {
+        const result = await api.post(`/risk/evaluate/${prep.transaction_id}`)
+        setCalibrationProgress(result.calibration_progress)
         await api.post(`/transactions/${prep.transaction_id}/confirm`)
-        setShowToast(true)
+        await refreshUser()
+        if (result.will_complete_calibration) {
+          setShowPatternReady(true)
+        } else {
+          setTimeout(() => navigate('/activity'), 1600)
+        }
+      } else {
+        setShowStagedAnalysis(true)
       }
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  async function handleVerdict(result) {
+    setShowStagedAnalysis(false)
+    setEvaluation(result)
+    trackEvent('gate_shown', { decision: result.decision }, transactionId)
+
+    if (result.decision === 'ALLOW') {
+      await api.post(`/transactions/${transactionId}/confirm`)
+      setShowToast(true)
     }
   }
 
@@ -99,6 +150,7 @@ export default function Trade() {
                 required
               />
               <Input
+                ref={amountInputRef}
                 label="Amount (₹)"
                 type="number"
                 min="1"
@@ -141,12 +193,42 @@ export default function Trade() {
               </div>
             </div>
 
-            <Button onClick={handleConfirm} disabled={submitting} className="w-full">
+            <Button
+              ref={(el) => trackerRef.current.attachConfirmHover(el)}
+              onClick={handleConfirm}
+              disabled={submitting}
+              className="w-full"
+            >
               {submitting ? 'Checking…' : 'Confirm'}
             </Button>
           </Card>
         )}
       </div>
+
+      {showLocationConsent && (
+        <LocationConsent onAllow={handleAllowLocation} onDismiss={handleDismissLocation} />
+      )}
+
+      {calibrationProgress && !showPatternReady && (
+        <CalibrationBanner current={calibrationProgress.current} total={calibrationProgress.total} />
+      )}
+
+      {showPatternReady && (
+        <PatternReady
+          onContinue={() => {
+            setShowPatternReady(false)
+            navigate('/')
+          }}
+        />
+      )}
+
+      {showStagedAnalysis && (
+        <StagedAnalysis
+          transactionId={transactionId}
+          onVerdict={handleVerdict}
+          onError={() => setShowStagedAnalysis(false)}
+        />
+      )}
 
       {evaluation && evaluation.decision !== 'ALLOW' && !showStepUp && (
         <PreCommitmentGate
