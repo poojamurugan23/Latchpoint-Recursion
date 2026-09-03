@@ -16,7 +16,7 @@ export default function RiskBadge({ decision, className = '' }) {
   if (!decision) return null
   return (
     <span
-      className={`inline-flex items-center rounded-sm px-2.5 py-1 text-xs font-medium ${STYLES[decision] || 'bg-surface-alt text-text-secondary'} ${className}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-caption font-semibold ${STYLES[decision] || 'bg-bg-subtle text-ink-600'} ${className}`}
     >
       {LABELS[decision] || decision}
     </span>
