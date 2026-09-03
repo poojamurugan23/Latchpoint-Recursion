@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Card from '../components/Card'
 import Input from '../components/Input'
@@ -25,7 +25,7 @@ export default function Login() {
       } else {
         await register(name, email, password)
       }
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -34,46 +34,61 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg px-4">
-      <Card className="w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-text-primary text-center mb-1">Latchpoint</h1>
-        <p className="text-sm text-text-secondary text-center mb-6">
-          {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
-        </p>
+    <div className="min-h-screen flex flex-col justify-between bg-white px-4">
+      <header className="py-6 max-w-5xl mx-auto w-full flex items-center justify-between">
+        <Link to="/" className="font-display text-xl font-semibold text-accent tracking-tight">
+          Latchpoint
+        </Link>
+      </header>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {mode === 'register' && (
-            <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          )}
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+      <main className="flex items-center justify-center my-auto">
+        <Card className="w-full max-w-sm">
+          <h1 className="font-display text-2xl font-semibold text-accent text-center mb-1">
+            Latchpoint
+          </h1>
+          <p className="text-secondary text-ink-600 text-center mb-6">
+            {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
+          </p>
 
-          {error && <p className="text-sm text-block">{error}</p>}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {mode === 'register' && (
+              <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+            )}
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-          <Button type="submit" disabled={loading} className="w-full mt-1">
-            {loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
-          </Button>
-        </form>
+            {error && <p className="text-caption text-block">{error}</p>}
 
-        <button
-          onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-          className="w-full text-center text-sm text-text-secondary hover:text-text-primary mt-5 transition-colors duration-150 ease-out"
-        >
-          {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-        </button>
-      </Card>
+            <Button type="submit" disabled={loading} className="w-full mt-1">
+              {loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
+            </Button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            className="w-full text-center text-secondary text-ink-600 hover:text-ink-900 mt-5 transition-colors duration-[120ms] ease-out"
+          >
+            {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+          </button>
+        </Card>
+      </main>
+
+      <footer className="py-6 text-center text-caption text-ink-400">
+        Pre-commitment financial risk intelligence
+      </footer>
     </div>
   )
 }

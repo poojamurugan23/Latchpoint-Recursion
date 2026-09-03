@@ -8,21 +8,21 @@ const CONFIG = {
     icon: ShieldQuestion,
     color: 'text-verify',
     bg: 'bg-verify-bg',
-    title: "Let's double-check this",
+    dot: 'bg-verify',
     primaryLabel: 'Verify & Continue',
   },
   HOLD: {
     icon: Clock,
     color: 'text-hold',
     bg: 'bg-hold-bg',
-    title: 'This needs a closer look',
+    dot: 'bg-hold',
     primaryLabel: 'Submit for Review',
   },
   BLOCK: {
     icon: ShieldX,
     color: 'text-block',
     bg: 'bg-block-bg',
-    title: "We can't complete this right now",
+    dot: 'bg-block',
     primaryLabel: null,
   },
 }
@@ -52,20 +52,20 @@ export default function PreCommitmentGate({ decision, reasons = [], onVerify, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4">
-      <div className="w-full max-w-md bg-surface rounded-lg shadow-lg p-8 transition-all duration-200 ease-out">
+      <div className="w-full max-w-md bg-white rounded-[20px] shadow-md p-8 transition-all duration-200 ease-out">
         <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${cfg.bg} mb-5`}>
           <Icon size={22} className={cfg.color} />
         </div>
 
-        <h2 className="text-lg font-semibold text-text-primary mb-1">{cfg.title}</h2>
-        <p className="text-sm text-text-secondary mb-5">
-          Before this goes through, here's what we noticed:
+        <h2 className="font-display text-verdict text-ink-900 mb-1">Before you continue</h2>
+        <p className="text-secondary text-ink-600 mb-5">
+          Here's what we noticed about this commitment:
         </p>
 
         <ul className="flex flex-col gap-2.5 mb-5">
           {reasons.slice(0, 3).map((reason, i) => (
-            <li key={i} className="flex gap-2.5 text-sm text-text-primary">
-              <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.color.replace('text-', 'bg-')}`} />
+            <li key={i} className="flex gap-2.5 text-secondary text-ink-900">
+              <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
               {reason}
             </li>
           ))}
@@ -73,14 +73,14 @@ export default function PreCommitmentGate({ decision, reasons = [], onVerify, on
 
         <button
           onClick={toggleExpanded}
-          className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary mb-6 transition-colors duration-150 ease-out"
+          className="flex items-center gap-1.5 text-secondary text-ink-600 hover:text-ink-900 mb-6 transition-colors duration-[120ms] ease-out"
         >
-          <ChevronDown size={16} className={`transition-transform duration-150 ease-out ${expanded ? 'rotate-180' : ''}`} />
+          <ChevronDown size={16} className={`transition-transform duration-[120ms] ease-out ${expanded ? 'rotate-180' : ''}`} />
           Why am I seeing this?
         </button>
 
         {expanded && (
-          <div className="rounded-sm bg-surface-alt p-4 text-sm text-text-secondary mb-6">
+          <div className="rounded-[10px] border border-border p-4 text-secondary text-ink-600 mb-6">
             Latchpoint compares this action against your typical patterns — amounts, timing,
             recipients, and how this transaction was carried out — before it's confirmed, not after.
             {decision === 'BLOCK' && (
@@ -98,14 +98,14 @@ export default function PreCommitmentGate({ decision, reasons = [], onVerify, on
               {cfg.primaryLabel}
             </Button>
           )}
-          <Button variant="ghost" onClick={handleCancel} className="w-full">
+          <Button variant="secondary" onClick={handleCancel} className="w-full">
             Cancel
           </Button>
           {decision === 'BLOCK' && (
             <a
               href="#"
               onClick={(e) => e.preventDefault()}
-              className="text-center text-sm text-text-secondary hover:text-text-primary mt-1 transition-colors duration-150 ease-out"
+              className="text-center text-secondary text-ink-600 hover:text-ink-900 mt-1 transition-colors duration-[120ms] ease-out"
             >
               Contact Support
             </a>

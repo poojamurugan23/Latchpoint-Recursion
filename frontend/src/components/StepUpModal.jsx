@@ -23,18 +23,18 @@ export default function StepUpModal({ reasons = [], onSubmit, onCancel }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4">
-      <div className="w-full max-w-sm bg-surface rounded-lg shadow-lg p-8">
+      <div className="w-full max-w-sm bg-white rounded-[20px] shadow-md p-8">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-verify-bg mb-5">
           <ShieldQuestion size={22} className="text-verify" />
         </div>
-        <h2 className="text-lg font-semibold text-text-primary mb-1">Verify it's you</h2>
-        <p className="text-sm text-text-secondary mb-5">
+        <h2 className="font-display text-verdict text-ink-900 mb-1">Verify it's you</h2>
+        <p className="text-secondary text-ink-600 mb-5">
           Enter the 6-digit code we sent you to continue.
         </p>
 
         <ul className="flex flex-col gap-2 mb-5">
           {reasons.slice(0, 2).map((reason, i) => (
-            <li key={i} className="text-xs text-text-secondary">
+            <li key={i} className="text-caption text-ink-600">
               • {reason}
             </li>
           ))}
@@ -52,7 +52,7 @@ export default function StepUpModal({ reasons = [], onSubmit, onCancel }) {
           <Button type="submit" disabled={submitting || code.length !== 6} className="w-full">
             {submitting ? 'Verifying…' : 'Confirm'}
           </Button>
-          <Button type="button" variant="ghost" onClick={onCancel} className="w-full">
+          <Button type="button" variant="secondary" onClick={onCancel} className="w-full">
             Cancel
           </Button>
         </form>

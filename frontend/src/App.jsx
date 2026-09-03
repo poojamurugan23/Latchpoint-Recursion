@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Transfer from './pages/Transfer'
@@ -21,8 +22,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/transfer" element={<ProtectedRoute><Transfer /></ProtectedRoute>} />
         <Route path="/trade" element={<ProtectedRoute><Trade /></ProtectedRoute>} />
         <Route path="/holds/:id" element={<ProtectedRoute><HoldReview /></ProtectedRoute>} />

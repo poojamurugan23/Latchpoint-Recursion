@@ -27,6 +27,13 @@ export function AuthProvider({ children }) {
     return data.user
   }
 
+  async function demoLogin() {
+    const data = await api.post('/auth/demo-login')
+    setToken(data.token)
+    setUser(data.user)
+    return data.user
+  }
+
   async function register(name, email, password) {
     const data = await api.post('/auth/register', { name, email, password })
     setToken(data.token)
@@ -46,7 +53,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, demoLogin, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
