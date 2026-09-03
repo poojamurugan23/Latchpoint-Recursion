@@ -41,11 +41,11 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
     # Some payees share a device fingerprint (mule-style network cluster) — this
     # is what the "network" injection pattern relies on.
     shared_cluster = []
-    if random.random() < 0.5 and n_payees >= 3:
+    if random.random() < 0.7 and n_payees >= 3:
         shared_cluster = random.sample(payee_ids, k=min(3, n_payees))
 
     # A payee this user has a history of losing money to — feeds "repeat-loss".
-    loss_payee = random.choice(payee_ids) if random.random() < 0.5 else None
+    loss_payee = random.choice(payee_ids) if random.random() < 0.7 else None
 
     rows = []
     history = []  # up to last 10 completed transactions: dict(amount, hour, payee_id, day)
@@ -73,7 +73,7 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
         pattern_roll = random.random()
 
         # --- DRIFT: burst of 3 same-day small txns, then a 4th escalated one ---
-        if baseline_n >= 3 and pattern_roll < 0.05 and t + 3 < n_txns:
+        if baseline_n >= 3 and pattern_roll < 0.09 and t + 3 < n_txns:
             burst_day = day
             for _ in range(3):
                 amt = max(50.0, np.random.normal(personal_mean, personal_std * 0.5))
@@ -134,7 +134,7 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
             continue
 
         # --- NETWORK: payment to a payee sharing a device with 2+ other payees ---
-        if baseline_n >= 3 and shared_cluster and 0.05 <= pattern_roll < 0.10:
+        if shared_cluster and 0.09 <= pattern_roll < 0.22:
             payee_id = random.choice(shared_cluster)
             amt = max(50.0, np.random.normal(personal_mean, personal_std))
             hour = random.randint(hour_low, hour_high)
@@ -170,7 +170,7 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
         if (
             loss_payee is not None
             and payee_loss_streak[loss_payee] >= 3
-            and 0.10 <= pattern_roll < 0.15
+            and 0.22 <= pattern_roll < 0.32
         ):
             amt = personal_mean * random.uniform(1.0, 2.0)
             hour = random.randint(hour_low, hour_high)
@@ -204,7 +204,7 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
             continue
 
         # --- CLEAN transaction ---
-        if loss_payee is not None and random.random() < 0.3:
+        if loss_payee is not None and random.random() < 0.5:
             payee_id = loss_payee
         else:
             payee_id = random.choice(payee_ids)
