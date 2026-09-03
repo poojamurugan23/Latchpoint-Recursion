@@ -21,14 +21,18 @@ ODD_HOUR_BUFFER = 2
 _population_baseline_cache: dict | None = None
 
 
-def get_recent_completed_transactions(db: Session, user_id: int, limit: int = WINDOW_SIZE):
-    return (
-        db.query(Transaction)
-        .filter(Transaction.user_id == user_id, Transaction.status == "completed")
-        .order_by(Transaction.created_at.desc())
-        .limit(limit)
-        .all()
+def get_recent_completed_transactions(
+    db: Session, user_id: int, txn_type: str | None = None, limit: int = WINDOW_SIZE
+):
+    # Scoped to the same transaction type as the pending one — a transfer's
+    # amount baseline shouldn't be diluted by unrelated trade amounts (or
+    # vice versa).
+    query = db.query(Transaction).filter(
+        Transaction.user_id == user_id, Transaction.status == "completed"
     )
+    if txn_type is not None:
+        query = query.filter(Transaction.type == txn_type)
+    return query.order_by(Transaction.created_at.desc()).limit(limit).all()
 
 
 def compute_personal_baseline(txns: list[Transaction]) -> dict:
@@ -110,7 +114,7 @@ def build_commitment_context(
     pending_txn: Transaction,
     user_session: UserSession | None,
 ) -> dict:
-    recent_txns = get_recent_completed_transactions(db, user_id)
+    recent_txns = get_recent_completed_transactions(db, user_id, txn_type=pending_txn.type)
     n = len(recent_txns)
     population = get_population_baseline(db)
 
