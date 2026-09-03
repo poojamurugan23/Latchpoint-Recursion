@@ -156,8 +156,12 @@ def build_commitment_context(
     if session_events:
         times = [e.created_at for e in session_events]
         time_in_flow_sec = (max(times) - min(times)).total_seconds()
+        time_in_flow_sec = time_in_flow_sec or 20.0
     else:
-        time_in_flow_sec = 0.0
+        # No tracked events (e.g. a direct API call) — use a neutral mid-range
+        # default rather than 0, which sits outside the training distribution
+        # and would otherwise dominate the SHAP explanation.
+        time_in_flow_sec = 20.0
 
     # --- network signals ---
     device_shared_with_other_payees_count = 0

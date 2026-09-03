@@ -1,48 +1,85 @@
 """Maps top SHAP features to plain-English reasons (spec §8.5). Deterministic
 templates are the primary (and, for this MVP, only) path — fast, reliable,
-zero network calls during a live demo."""
+zero network calls during a live demo.
+
+Each template returns None when the underlying context value wouldn't make a
+sensible sentence (e.g. a feature with a small positive SHAP baseline offset
+even though its real-world value is 0) — explain() then falls through to the
+next-ranked feature instead of surfacing a vacuous reason."""
 
 TEMPLATES = {
     "exposure_vs_baseline_ratio": lambda v, ctx: (
         f"You've committed ₹{ctx['exposure_today']:,.0f} today — "
-        f"about {max(ctx['exposure_vs_baseline_ratio'], 1.0):.1f}x your typical daily total."
-    ),
+        f"about {ctx['exposure_vs_baseline_ratio']:.1f}x your typical daily total."
+    ) if ctx["exposure_vs_baseline_ratio"] >= 1.5 else None,
     "deviation_ratio": lambda v, ctx: (
         f"This amount is unusually large compared to your typical transaction "
         f"of about ₹{ctx['mean_amount']:,.0f}."
+    ) if ctx["deviation_ratio"] > 0 else None,
+    "is_new_payee": lambda v, ctx: (
+        "This is a new recipient you haven't paid before." if ctx["is_new_payee"] else None
     ),
-    "is_new_payee": lambda v, ctx: "This is a new recipient you haven't paid before.",
-    "is_odd_hour": lambda v, ctx: "You don't usually transact at this time of day.",
+    "is_odd_hour": lambda v, ctx: (
+        "You don't usually transact at this time of day." if ctx["is_odd_hour"] else None
+    ),
     "baseline_confidence_score": lambda v, ctx: (
         "We don't have much transaction history for you yet, so this is being "
         "compared against typical behavior across all users."
+        if ctx["baseline_confidence_score"] < 1.0
+        else None
     ),
     "exposure_today": lambda v, ctx: (
         f"You've already committed ₹{ctx['exposure_today']:,.0f} today across "
         f"{int(ctx['txn_count_today'])} transaction(s)."
+        if ctx["txn_count_today"] >= 2
+        else None
     ),
     "txn_count_today": lambda v, ctx: (
         f"This is your {int(ctx['txn_count_today'])}th transaction today, more than usual."
+        if ctx["txn_count_today"] >= 3
+        else None
     ),
-    "pause_count": lambda v, ctx: "There were unusual pauses while you filled this out.",
-    "edit_count": lambda v, ctx: "This form was edited more times than usual before submitting.",
-    "back_navigation_count": lambda v, ctx: "You navigated back and forth before reaching this step.",
-    "time_in_flow_sec": lambda v, ctx: "This transaction was completed unusually quickly.",
+    "pause_count": lambda v, ctx: (
+        "There were unusual pauses while you filled this out." if ctx["pause_count"] >= 2 else None
+    ),
+    "edit_count": lambda v, ctx: (
+        "This form was edited more times than usual before submitting."
+        if ctx["edit_count"] >= 3
+        else None
+    ),
+    "back_navigation_count": lambda v, ctx: (
+        "You navigated back and forth before reaching this step."
+        if ctx["back_navigation_count"] >= 1
+        else None
+    ),
+    "time_in_flow_sec": lambda v, ctx: (
+        "This transaction was completed unusually quickly." if ctx["time_in_flow_sec"] < 8 else None
+    ),
     "device_shared_with_other_payees_count": lambda v, ctx: (
         f"This recipient shares a device fingerprint with "
         f"{int(ctx['device_shared_with_other_payees_count'])} other recipients you've paid recently."
+        if ctx["device_shared_with_other_payees_count"] > 0
+        else None
     ),
     "recipient_is_new_device_pairing": lambda v, ctx: (
         "You haven't paid this recipient from this device before."
+        if ctx["recipient_is_new_device_pairing"]
+        else None
     ),
-    "ip_is_vpn_or_proxy": lambda v, ctx: "This session is coming through a VPN or proxy.",
+    "ip_is_vpn_or_proxy": lambda v, ctx: (
+        "This session is coming through a VPN or proxy." if ctx["ip_is_vpn_or_proxy"] else None
+    ),
     "repeat_pattern_negative_outcome": lambda v, ctx: (
         f"You've made {int(ctx['prior_negative_outcome_streak'])} similar transactions "
         f"recently that resulted in a loss."
+        if ctx["prior_negative_outcome_streak"] >= 1
+        else None
     ),
     "prior_negative_outcome_streak": lambda v, ctx: (
         f"Your last {int(ctx['prior_negative_outcome_streak'])} transactions to this "
         f"recipient/symbol resulted in a loss."
+        if ctx["prior_negative_outcome_streak"] >= 1
+        else None
     ),
 }
 
@@ -52,18 +89,22 @@ MEANINGFUL_SHAP_THRESHOLD = 0.05
 
 def explain(shap_by_feature: dict, ctx: dict, top_n: int = 3) -> tuple[list[str], list[dict]]:
     ranked = sorted(shap_by_feature.items(), key=lambda kv: abs(kv[1]), reverse=True)
-    top = [
+    candidates = [
         (feature, value)
         for feature, value in ranked
         # only features that meaningfully push risk *up* make useful reasons
         if value > MEANINGFUL_SHAP_THRESHOLD
-    ][:top_n]
+    ]
 
     reasons = []
     top_features = []
-    for feature, value in top:
+    for feature, value in candidates:
+        if len(reasons) >= top_n:
+            break
         template = TEMPLATES.get(feature)
         reason = template(value, ctx) if template else f"Unusual value for {feature}."
+        if reason is None:
+            continue
         reasons.append(reason)
         top_features.append({"feature": feature, "shap_value": float(value)})
 
