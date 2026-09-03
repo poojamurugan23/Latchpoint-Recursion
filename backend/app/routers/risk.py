@@ -1,7 +1,7 @@
 import json
 import time
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -11,6 +11,7 @@ from app.models.user import User, CALIBRATION_WINDOW
 from app.models.session import UserSession
 from app.models.transaction import Transaction
 from app.models.case import Case
+from app.rate_limit import limiter
 from app.schemas.risk import RiskEvaluationResponse
 from app.security import get_current_user
 from app.services import feature_engine, risk_model, explanation, decision_engine
@@ -87,7 +88,9 @@ def _evaluate_and_persist(db: Session, current_user: User, user_session: UserSes
 
 
 @router.post("/evaluate/{transaction_id}", response_model=RiskEvaluationResponse)
+@limiter.limit("30/minute")
 def evaluate(
+    request: Request,
     transaction_id: int,
     current_user: User = Depends(get_current_user),
     user_session: UserSession = Depends(resolve_session),
@@ -103,7 +106,9 @@ def evaluate(
 
 
 @router.get("/evaluate-stream/{transaction_id}")
+@limiter.limit("30/minute")
 def evaluate_stream(
+    request: Request,
     transaction_id: int,
     current_user: User = Depends(get_current_user),
     user_session: UserSession = Depends(resolve_session),

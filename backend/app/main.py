@@ -1,20 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app import models  # noqa: F401 - ensures all models are registered on Base
+from app.rate_limit import limiter
 from app.routers import auth, users, payees, transactions, events, risk, cases, kpi
 from app.error_handling import register_exception_handlers
-
-# Basic abuse protection (spec §5) — auth (credential stuffing) and risk
-# evaluation (scraping the model's decision boundary) carry @limiter.limit(...)
-# decorators in their own routers; this is the shared limiter instance.
-limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="Latchpoint")
 app.state.limiter = limiter
