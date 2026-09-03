@@ -112,6 +112,14 @@ def main():
 
         db.commit()
 
+        # The demo user starts with a full transaction history already on
+        # record, so they should never see the calibration flow (Phase 3
+        # §1) — skip straight to "active" with a materialized baseline.
+        user.calibration_status = "active"
+        user.calibrated_txn_count = 10
+        user.baseline_snapshot = materialize_baseline_snapshot(db, user.id)
+        db.commit()
+
         print(f"Seeded demo user: {DEMO_EMAIL} / {DEMO_PASSWORD}")
         print()
         print("Live demo scenarios to run through the UI:")
