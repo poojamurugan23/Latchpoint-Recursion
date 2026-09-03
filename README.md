@@ -1,12 +1,13 @@
 # Latchpoint
 
-**Pre-Commitment Financial Risk Intelligence**  
-_Autonomous behavioral risk evaluation, sequence modeling, deep client telemetry, and real-time gate interception._
+**Risk Intelligence for the Last Reversible Moment**  
+_Autonomous pre-commitment risk evaluation, multi-signal risk fusion, behavioral biometrics, journey intelligence, and real-time operations console._
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.5-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.1-FF6600?style=flat-square)](https://xgboost.readthedocs.io)
 [![SHAP](https://img.shields.io/badge/SHAP-0.46-blue?style=flat-square)](https://shap.readthedocs.io)
 [![License](https://img.shields.io/badge/License-MIT-black?style=flat-square)](LICENSE)
@@ -18,246 +19,154 @@ _Autonomous behavioral risk evaluation, sequence modeling, deep client telemetry
 Most financial fraud systems ask: _"Is this transaction legitimate?"_  
 **Latchpoint** asks: _"Is committing to this **right now** — given the sequence, network, personal history, and behavioral biometrics — risky, even when the action itself looks authorized?"_
 
-Latchpoint intervenes in the seconds **before** a financial commitment is executed, not after funds have already left the account.
+Latchpoint operates at the **last reversible moment**: intervening in the seconds before a financial commitment is executed, while funds remain untouched and fully safe.
 
 ```
-[ User Intent ]
-      │
-      ▼
-[ 1. Prepare ] ────────► POST /api/transactions/prepare  (Status: DRAFT — Balance untouched)
-      │
-      ▼
-[ 2. Telemetry ] ──────► Deep client telemetry (keystroke timing, confirm hover hesitation, mouse kinematics)
-      │
-      ▼
-[ 3. Staged SSE Engine] ► GET /api/risk/evaluate-stream/{id} (Baseline → Sequence → Network → Context → Behavior)
-      │
-      ▼
-[ 4. Gate Verdict ] ───► ALLOW | VERIFY | HOLD | BLOCK (SHAP feature attribution & plain-English reasons)
-      │
-      ▼
-[ 5. Execution ] ──────► POST /api/transactions/confirm  (Status: COMPLETED — Balance debited)
+[ User Action / Intent ]
+          │
+          ▼
+[ 1. Prepare ] ────────► POST /api/transactions/prepare (Status: DRAFT — Balance untouched)
+          │
+          ▼
+[ 2. Telemetry ] ──────► Passive 10Hz kinematics (confirm hover hesitation, dwell, keystroke variance)
+          │
+          ▼
+[ 3. Multi-Signal ] ───► Behavior (Isolation Forest) + Sequence + Transaction + History + Context + Network
+          │
+          ▼
+[ 4. Gate Verdict ] ───► ALLOW | MONITOR | STEP-UP | HOLD | BLOCK
+          │
+          ▼
+[ 5. Execution ] ──────► POST /api/transactions/confirm (Status: COMPLETED — Balance debited)
 ```
 
 ---
 
-## Core Capabilities
+## Two Distinct Experiences
 
-### 1. First-Class Calibration Lifecycle
+Latchpoint provides two tailored, purpose-built interfaces:
 
-- **Visible 10-Transaction Calibration**: A newly registered user's first 10 transactions build their personal behavioral baseline.
-- **Honest Calibrating Banner**: During calibration, transactions proceed normally without fabricated verdicts. The banner clearly states: _"Building your pattern (n/10) — this transaction is being processed normally."_
-- **Dashboard Calibration Bar**: Persistent 10-segment visual progress indicator with caption in Montserrat 12px showing exact completion progress.
-- **"Pattern Ready" Milestone**: On the 10th transaction, a dedicated full-screen moment displays: _"Your pattern is ready. Latchpoint is now actively watching for activity that doesn't match your established pattern — before it becomes irreversible."_
-- **Materialized Baseline Snapshot**: Stores `mean_amount`, `std_amount`, `typical_entities`, `typical_hour_range`, and `typical_gap_days` as a reference artifact while rolling live windows continue scoring.
+### A. Customer Banking Experience
+Clean, restrained institutional consumer banking interface preserving user trust:
+- **Dashboard (`/dashboard`)**: Account balances, personal baseline calibration progress (10-transaction window), recent transactions.
+- **Transfer (`/transfer`)**: Multi-step transfer wizard instrumented with passive telemetry.
+- **Pre-Commitment Gate Interceptor**: Non-accusatory step-up challenge triggered at confirmation when anomalous signals are detected. Reassures the user: _"Your payment has NOT been sent."_
+- **Activity (`/activity`)**: Transaction history with pre-commitment decision verdicts.
+- **Payees (`/payees`)**: Manage trusted counterparties.
+- **Privacy & Data Governance Modal**: Transparent controls with zero-secret guarantee (raw passwords and OTPs are never stored).
 
-### 2. Advanced Client-Side Behavioral Telemetry (`BehavioralTracker.js`)
+### B. Risk Operations Console (Admin Experience)
+High-density institutional command center designed for fintech risk analysts and security engineers:
+- **Command Center (`/admin` & `/admin/overview`)**: Top 6 KPIs (Active Sessions, Pending Commitments, Elevated-Risk, Interventions Today, Prevented Exposure, P95 Decision Latency), live risk feed, system health, and calculated risk distribution.
+- **Live Sessions (`/admin/live`)**: Real-time session monitoring table with expandable event timelines and duration tracking.
+- **Users & Baselines (`/admin/users` & `/admin/users/:id`)**: Personal baseline window comparisons ($+4.9\sigma$ statistical deviation), historical activity charts, and signal breakdowns.
+- **Commitments Hero Screen (`/admin/commitments` & `/admin/commitments/:id`)**: The signature inspection view displaying why an action is flagged, the 6-signal breakdown, and direct analyst action buttons (`VERIFY`, `HOLD`, `RELEASE`, `BLOCK`).
+- **Risk Timeline (`/admin/timeline`)**: Interactive risk curve tracking risk score escalation across sequential micro-actions.
+- **Network Intelligence (`/admin/network`)**: Interactive SVG entity relationship graph (Users, Accounts, Beneficiaries, Devices, IPs) with zoom, pan, type filtering, and an entity inspector panel.
+- **Alert Center (`/admin/alerts`)**: Filterable triage workspace by status (`NEW`, `INVESTIGATING`, `VERIFIED`, `HELD`, `RESOLVED`) and risk tier.
+- **Investigations (`/admin/investigations`)**: Multi-pane case workspace with forensic evidence packages and compliance adjudication notes.
+- **Session Replay Engine (`/admin/replay`)**: Interactive event-by-event playback controls (`PLAY`, `PAUSE`, `NEXT`, `PREV`, `RESET`) dynamically updating timeline, radar, and triggering the Pre-Commitment Gate at confirmation.
+- **Model Intelligence (`/admin/models`)**: Registry of active models (Isolation Forest, Sequence Model, XGBoost, Network Graph Analyzer) with input features, latency, and feature importances.
+- **System Architecture (`/admin/system`)**: Visual end-to-end execution pipeline flowchart with live component latencies.
 
-- **Passive Kinematics**: Throttled 10Hz sampling buffers mouse distance, velocity, and direction changes client-side. Only aggregates are dispatched.
-- **Confirm Button Hesitation**: Specifically instruments the confirm button to measure `hover_ms_before_click` (cursor dwell time before landing the click).
-- **Keystroke Timing**: Inter-keystroke interval mean and variance while typing amounts. Strictly timing metrics — raw keystroke values never leave the browser.
-- **Custom Geolocation Consent**: Non-blocking modal prompt matching the design system (`LocationConsent.jsx`) before requesting browser geolocation.
+---
 
-### 3. Real-Time Staged Evaluation (Server-Sent Events)
+## 6-Signal Risk Fusion Architecture
 
-- **Legible Computation**: Instead of a generic spinner, Confirm initiates an SSE stream (`/api/risk/evaluate-stream/{id}`).
-- **5 Evaluation Stages**: Sequentially checks **Baseline**, **Sequence**, **Network**, **Context**, and **Behavior**.
-- **Live Summaries**: Each stage checks off with a custom checkmark and plain-English summary line fading in (e.g. _"2 other recipients share this counterparty device fingerprint"_).
+Latchpoint separates policy decisions from raw anomaly detection through a configurable 6-factor fusion layer:
 
-### 4. "White Studio" Design System v2
+| Signal Dimension | Weight | Engine & Technique | Primary Inputs |
+| :--- | :---: | :--- | :--- |
+| **Behavioral Biometrics** | 20% | `IsolationForest` (Scikit-Learn) | Hover dwell time, cursor velocity, direction changes, idle intervals, typing cadence variance |
+| **Sequence Journey** | 20% | Markov State Transitions | Transition ordering, back-navigations, repeated reviews, rapid completion bursts |
+| **Transaction Dynamics** | 20% | Rolling Baseline ($\sigma$ deviation) | Amount vs personal mean, time of day anomaly, velocity |
+| **Historical Outcomes** | 15% | Counterparty Track Record | Dispute streaks, prior loss history, recipient trust longevity |
+| **Contextual Timing** | 15% | In-Session Drift Engine | Newly added beneficiary within session, multiple amount revisions |
+| **Network Topology** | 10% | Relational Multi-Hop Analyzer | Shared device fingerprints across distinct payees, VPN/proxy flags, IP collision density |
 
-- Pure white canvas (`#FFFFFF`), 1px hairline borders (`#EBEBEE`), deep ink-indigo accents (`#23265C`), and semantic risk tokens.
-- Strict typography: **Playfair Display** (wordmark, hero, titles, verdicts) and **Montserrat** (body copy, forms, tables, badges, captions).
-- Streamlined clean flow: Landing (`/`) → Dashboard (`/dashboard`) → Transfer (`/transfer`) → Activity (`/activity`).
+### Decision Policy Tiers
+- **ALLOW (0–30)**: Standard baseline transaction; executed without friction.
+- **MONITOR (31–50)**: Mild anomaly; logged and silently monitored.
+- **STEP-UP (51–70)**: Moderate deviation; triggers non-accusatory OTP or biometric challenge.
+- **HOLD (71–85)**: High risk; intercepted before execution and queued for analyst compliance review.
+- **BLOCK (86–100)**: Critical threat; hard stop (e.g. denylist match or repeat 3+ loss streak).
+
+---
+
+## Predefined Demo Scenarios
+
+The Risk Console header includes a persistent **Demo Scenario Selector**:
+
+1. **Signature Showcase: Multi-Signal High Risk (₹25,000)**:
+   - Routine baseline: ₹1,800 – ₹3,500.
+   - Sequence: `LOGIN` $\rightarrow$ `BENEFICIARY_ADDED` $\rightarrow$ `₹20,000 ENTERED` $\rightarrow$ `AMOUNT REVISED TO ₹25,000` $\rightarrow$ `REVIEW` $\rightarrow$ `REVIEW AGAIN` $\rightarrow$ `CONFIRM`.
+   - Result: Pre-Commitment Risk **78/100 (HIGH)** $\rightarrow$ **STEP-UP** challenge intercepted before balance debit.
+2. **Normal User Baseline (₹2,100)**: Routine utility payment matching historical habits $\rightarrow$ **ALLOW (14/100)**.
+3. **Unusual But Legitimate (₹8,500)**: Higher amount at an off-peak hour to a known payee $\rightarrow$ **MONITOR (42/100)**.
+4. **Escalating Velocity (₹2,700 4th transfer)**: 4th payment in single afternoon exceeding cumulative daily threshold $\rightarrow$ **HOLD (76/100)**.
+5. **Network Risk / Shared Device (₹3,500)**: Target counterparty hardware fingerprint linked to multiple distinct external payees $\rightarrow$ **STEP-UP (58/100)**.
+6. **Context Risk / Repeat Loss (₹12,000)**: Target entity associated with 3 consecutive prior disputes $\rightarrow$ **BLOCK (94/100)**.
+
+---
+
+## Realistic Seeded Dataset (§43)
+
+- **Total Registered Users**: 22 (including primary demo user `demo@latchpoint.app`)
+- **Total User Sessions**: 55 (with IP and hardware device linkages)
+- **Total Financial Transactions**: 71
+- **Total Telemetry Events**: 393 (mouse kinematics, hover dwells, edits, navigations)
+- **Total Beneficiaries**: 82
+- **Risk Distribution**: ~70% ALLOW, ~15% MONITOR, ~10% STEP-UP, ~4% HOLD, ~1% BLOCK
 
 ---
 
 ## Quickstart
 
 ### Prerequisites
-
-- **Python** 3.11 or 3.12
-- **Node.js** 18+ & **npm**
+- Python 3.11+
+- Node.js 18+
 
 ### 1. Backend Setup
-
 ```bash
 cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Seed the demo user, active baseline, and live test scenarios
+# Seed realistic multi-user dataset (22 users, 55 sessions, 393 events)
 python seed_demo_data.py
 
-# Start the API server
+# Start FastAPI server (port 8000)
 uvicorn app.main:app --reload --port 8000
 ```
 
-Verify backend health:
-
-```bash
-curl http://localhost:8000/api/health
-# {"status": "ok", "model_loaded": true, "db_connected": true}
-```
-
 ### 2. Frontend Setup
-
 ```bash
 cd frontend
 npm install
+
+# Run Vite dev server (port 5173)
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+### 3. Demo Credentials
+- **Customer Portal**: `http://localhost:5173/login` (click **"Demo Login"** or use `demo@latchpoint.app` / `demo1234`)
+- **Risk Operations Console**: `http://localhost:5173/admin`
 
 ---
 
-## Live Demo Scenarios
+## Automated Verification
 
-The pre-seeded demo user starts in **active** status with 10 historical transactions establishing their personal baseline (routine utility payments of ₹1,800–₹2,400 to trusted payees).
-
-Click **"Enter Live Demo →"** on the landing page for instant 1-click access:
-
-| Scenario    | Type     | Target Payee                | Amount   | Signal Dimension                                                       | Expected Verdict                                                                       |
-| :---------- | :------- | :-------------------------- | :------- | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| **Clean 1** | Transfer | _Rent - Sunview Apartments_ | ~₹1,900  | Familiar payee, baseline amount                                        | **ALLOW**<br/>Instant confirmation with non-blocking toast.                            |
-| **Clean 2** | Transfer | _FiberNet Broadband_        | ~₹900    | Trusted utility, sub-baseline amount                                   | **ALLOW**<br/>Instant confirmation with non-blocking toast.                            |
-| **Drift**   | Transfer | _Rent - Sunview Apartments_ | ~₹2,700  | 4th transfer today; cumulative daily exposure >3.2x baseline           | **HOLD**<br/>Pre-Commitment Gate modal opens; submit for review (`/holds/{id}`).       |
-| **Network** | Transfer | _QuickCash Transfers_       | ~₹3,500  | Shared device fingerprint with 2 other newly added payees              | **VERIFY**<br/>Pre-Commitment Gate prompts in-flight 6-digit OTP step-up verification. |
-| **Context** | Transfer | _CryptoVault Transfers_     | ~₹12,000 | 3 consecutive prior transfers to this entity resulted in disputes/loss | **BLOCK**<br/>Severe intervention; commitment aborted, balance protected.              |
-
-> **Resetting Demo Data**: Run `rm -f backend/latchpoint.db && python backend/seed_demo_data.py` at any time.
-
----
-
-## Design System Reference: "White Studio"
-
-### Palette
-
-| Token                      | Hex Value             | Role                                                     |
-| :------------------------- | :-------------------- | :------------------------------------------------------- |
-| `--bg`                     | `#FFFFFF`             | Primary background across all screens                    |
-| `--bg-subtle`              | `#FAFAFA`             | Table row hover states and subtle secondary surfaces     |
-| `--surface`                | `#FFFFFF`             | Card and container backgrounds                           |
-| `--border`                 | `#EBEBEE`             | 1px hairline separator                                   |
-| `--border-strong`          | `#DCDCE2`             | Focus states and active dividers                         |
-| `--ink-900`                | `#14141B`             | High-contrast primary text                               |
-| `--ink-600`                | `#63636D`             | Secondary body text and labels                           |
-| `--ink-400`                | `#9C9CA4`             | Muted metadata and placeholders                          |
-| `--accent`                 | `#23265C`             | Deep ink-indigo (wordmark, primary buttons, focus rings) |
-| `--accent-tint`            | `#EEEEF5`             | 6% accent tint for active navigation states              |
-| `--allow` / `--allow-bg`   | `#227A4E` / `#EAF6EE` | Allow status badge & toast icon                          |
-| `--verify` / `--verify-bg` | `#A8720F` / `#FBF1DF` | Verify step-up challenge                                 |
-| `--hold` / `--hold-bg`     | `#B0591F` / `#FBEEE1` | Under review hold state                                  |
-| `--block` / `--block-bg`   | `#A93434` / `#FAEAEA` | Severe block state & form errors                         |
-
-### Typography Rules
-
-- **Playfair Display**: Used exclusively for:
-  1. The wordmark _"Latchpoint"_ (600, 20px)
-  2. Landing page hero headline (600, 40px/48px)
-  3. Primary page titles `<h1>` (600, 28px/36px)
-  4. Pre-Commitment Gate verdict line (_"Before you continue"_ / _"Verify it's you"_, 500, 22px/30px)
-- **Montserrat**: Powers 95%+ of the interface:
-  - Body copy: 400, 16px/24px
-  - Form labels: 500, 14px/20px
-  - Button text: 600, 14px (letter-spacing 0.01em)
-  - Eyebrows: 600, 11px uppercase (letter-spacing 0.08em)
-
----
-
-## API Architecture
-
-| Method | Endpoint                                | Description                                               |
-| :----- | :-------------------------------------- | :-------------------------------------------------------- |
-| `POST` | `/api/auth/register`                    | Register new user (initiates 10-txn calibration mode)     |
-| `POST` | `/api/auth/login`                       | Email/password login                                      |
-| `POST` | `/api/auth/demo-login`                  | Zero-typing 1-click login for the seeded demo account     |
-| `GET`  | `/api/users/me`                         | Fetch authenticated user, balance, and calibration status |
-| `GET`  | `/api/payees`                           | List user payees                                          |
-| `POST` | `/api/payees`                           | Register a new payee                                      |
-| `POST` | `/api/transactions/prepare`             | Prepare draft transaction (balance untouched)             |
-| `GET`  | `/api/risk/evaluate-stream/{id}`        | Real-time SSE staged risk evaluation                      |
-| `POST` | `/api/risk/evaluate/{id}`               | Synchronous risk evaluation fallback                      |
-| `POST` | `/api/transactions/{id}/confirm`        | Confirm allowed/verified transaction and debit account    |
-| `POST` | `/api/transactions/{id}/cancel`         | Abort draft or held transaction                           |
-| `POST` | `/api/transactions/{id}/step-up/verify` | Submit 6-digit OTP challenge code                         |
-| `GET`  | `/api/cases`                            | Compliance hold review queue                              |
-| `POST` | `/api/events`                           | Passive telemetry ingestion endpoint                      |
-| `GET`  | `/api/health`                           | System status check (model loaded & DB connectivity)      |
-
----
-
-## Project Structure
-
-```
-Latchpoint-Recursion/
-├── README.md                           # Master architectural specification
-├── package.json                        # Root workspace scripts
-├── backend/
-│   ├── app/
-│   │   ├── config.py                   # Environment & JWT configuration
-│   │   ├── database.py                 # SQLAlchemy engine & session factory
-│   │   ├── dependencies.py             # Session & device fingerprint resolution
-│   │   ├── error_handling.py           # Centralized exception formatting
-│   │   ├── logging_config.py           # Structured JSON logger
-│   │   ├── main.py                     # FastAPI application & middleware
-│   │   ├── rate_limit.py               # SlowAPI rate limiting configuration
-│   │   ├── security.py                 # Password hashing & JWT generation
-│   │   ├── ml/                         # Synthetic data generation & training
-│   │   ├── models/                     # User, Account, Payee, Device, Transaction, Session models
-│   │   ├── routers/                    # Auth, Transactions, Risk, Events, Payees, Cases, Users, KPI
-│   │   ├── schemas/                    # Pydantic validation schemas
-│   │   └── services/                   # Decision engine, explanation, feature engine, risk model
-│   ├── seed_demo_data.py               # Demo scenario seed script
-│   └── requirements.txt                # Backend dependencies
-└── frontend/
-    ├── src/
-    │   ├── api/client.js               # API client with session telemetry headers & SSE streamGet
-    │   ├── components/                 # UI components (Button, Input, Layout, PreCommitmentGate,
-    │   │                               # CalibrationBanner, PatternReady, LocationConsent, StagedAnalysis)
-    │   ├── context/                    # AuthContext & EventTrackerContext
-    │   ├── pages/                      # Landing, Dashboard, Transfer, Activity, Payees, HoldReview, etc.
-    │   ├── styles/index.css            # White Studio design system tokens & shimmer animations
-    │   ├── telemetry/                  # BehavioralTracker.js passive client-side telemetry
-    │   ├── App.jsx                     # Application routing & protected route guards
-    │   └── main.jsx                    # Root font imports & provider mount
-    ├── tailwind.config.js              # Token configuration & typography scale
-    └── package.json                    # Frontend dependencies
-```
-
----
-
-## Production Hygiene
-
-- **Structured JSON Logging**: Centralized logger in `backend/app/logging_config.py` logging latency, risk scores, and decisions.
-- **Centralized Error Handling**: Standardized error envelopes `{"error": {"code", "message"}}` via `backend/app/error_handling.py`.
-- **Rate Limiting**: `slowapi` rate limiting on auth (`10/minute`) and risk evaluation endpoints (`30/minute`).
-- **Health Probing**: Real model load check and database query check on `/api/health`.
-
----
-
-## Verification
-
-To verify that the entire stack compiles and runs without issues:
+Run the comprehensive test suite verifying behavioral models, sequence intelligence, risk fusion, and admin endpoints:
 
 ```bash
-# Frontend build verification
-cd frontend
-npm run build    # Builds cleanly in ~1.1s with 0 errors
-
-# Frontend lint check
-npm run lint     # oxlint static analysis (0 errors)
-
-# Backend demo login and scenario verification
-cd ../backend
-python -m venv venv
-./venv/bin/python seed_demo_data.py
+cd backend
+./venv/bin/python test_risk_engine.py
 ```
 
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+Frontend production build check:
+```bash
+cd frontend
+npm run build
+npm run lint
+```

@@ -41,7 +41,7 @@ class Transaction(Base):
         default="draft",
     )
     decision = Column(
-        Enum("ALLOW", "VERIFY", "HOLD", "BLOCK", name="transaction_decision"),
+        Enum("ALLOW", "MONITOR", "STEP-UP", "VERIFY", "HOLD", "BLOCK", name="transaction_decision"),
         nullable=True,
     )
     risk_score = Column(Float, nullable=True)

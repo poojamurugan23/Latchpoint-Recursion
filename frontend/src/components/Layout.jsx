@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -6,8 +7,12 @@ import {
   Users,
   BarChart3,
   LogOut,
+  ShieldAlert,
+  ShieldCheck,
+  ArrowUpRight,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import PrivacyModal from "./PrivacyModal";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -19,11 +24,12 @@ const NAV_ITEMS = [
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-border bg-white sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link
               to="/dashboard"
@@ -53,6 +59,26 @@ export default function Layout({ children }) {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setPrivacyOpen(true)}
+              className="flex items-center gap-1 text-xs text-ink-600 hover:text-ink-900 px-2.5 py-1.5 rounded border border-border hover:bg-bg-subtle transition-colors"
+              title="Privacy Controls"
+            >
+              <ShieldCheck size={14} className="text-accent" />
+              <span>Privacy</span>
+            </button>
+
+            {/* Quick Switcher to Admin / Risk Console */}
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 text-xs font-semibold text-white px-3 py-1.5 rounded bg-ink-900 hover:bg-ink-800 transition-colors shadow-xs"
+              title="Open Risk Intelligence Console"
+            >
+              <ShieldAlert size={14} className="text-amber-400" />
+              <span>Risk Console</span>
+              <ArrowUpRight size={13} />
+            </Link>
+
             {user?.is_demo && (
               <span className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-caption font-medium text-ink-600 bg-transparent">
                 Demo Mode
@@ -70,7 +96,8 @@ export default function Layout({ children }) {
           </div>
         </div>
       </header>
-      <main className="max-w-5xl mx-auto px-6 py-10">{children}</main>
+      <main className="max-w-6xl mx-auto px-6 py-10">{children}</main>
+      <PrivacyModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </div>
   );
 }

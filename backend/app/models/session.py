@@ -15,6 +15,7 @@ class UserSession(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     device_id = Column(Integer, ForeignKey("devices.id"), nullable=True)
     client_session_id = Column(String, unique=True, index=True, nullable=True)
+    ip_address = Column(String, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     location_source = Column(String, nullable=True)  # "gps" | "ip"

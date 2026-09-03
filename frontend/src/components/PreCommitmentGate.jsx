@@ -1,9 +1,16 @@
 import { useState } from 'react'
-import { ChevronDown, ShieldQuestion, Clock, ShieldX } from 'lucide-react'
+import { ChevronDown, ShieldQuestion, Clock, ShieldX, AlertTriangle } from 'lucide-react'
 import Button from './Button'
 import { useEventTracker } from '../context/EventTrackerContext'
 
 const CONFIG = {
+  'STEP-UP': {
+    icon: ShieldQuestion,
+    color: 'text-verify',
+    bg: 'bg-verify-bg',
+    dot: 'bg-verify',
+    primaryLabel: 'Verify with OTP & Continue',
+  },
   VERIFY: {
     icon: ShieldQuestion,
     color: 'text-verify',
@@ -16,7 +23,7 @@ const CONFIG = {
     color: 'text-hold',
     bg: 'bg-hold-bg',
     dot: 'bg-hold',
-    primaryLabel: 'Submit for Review',
+    primaryLabel: 'Submit for Compliance Review',
   },
   BLOCK: {
     icon: ShieldX,
@@ -25,13 +32,19 @@ const CONFIG = {
     dot: 'bg-block',
     primaryLabel: null,
   },
+  MONITOR: {
+    icon: AlertTriangle,
+    color: 'text-verify',
+    bg: 'bg-verify-bg',
+    dot: 'bg-verify',
+    primaryLabel: 'Confirm & Continue',
+  },
 }
 
 export default function PreCommitmentGate({ decision, reasons = [], onVerify, onHold, onCancel }) {
   const [expanded, setExpanded] = useState(false)
   const { trackEvent } = useEventTracker()
-  const cfg = CONFIG[decision]
-  if (!cfg) return null
+  const cfg = CONFIG[decision] || CONFIG['STEP-UP']
   const Icon = cfg.icon
 
   function toggleExpanded() {
@@ -41,8 +54,8 @@ export default function PreCommitmentGate({ decision, reasons = [], onVerify, on
 
   function handlePrimary() {
     trackEvent('confirm_clicked')
-    if (decision === 'VERIFY') onVerify?.()
-    else if (decision === 'HOLD') onHold?.()
+    if (decision === 'HOLD') onHold?.()
+    else onVerify?.()
   }
 
   function handleCancel() {
@@ -51,65 +64,63 @@ export default function PreCommitmentGate({ decision, reasons = [], onVerify, on
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4">
-      <div className="w-full max-w-md bg-white rounded-[20px] shadow-md p-8 transition-all duration-200 ease-out">
-        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${cfg.bg} mb-5`}>
-          <Icon size={22} className={cfg.color} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs px-4 animate-in fade-in duration-150">
+      <div className="w-full max-w-md bg-white rounded-[20px] shadow-xl p-7 border border-border transition-all duration-200 ease-out">
+        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${cfg.bg} mb-4`}>
+          <Icon size={24} className={cfg.color} />
         </div>
 
         <h2 className="font-display text-verdict text-ink-900 mb-1">Before you continue</h2>
-        <p className="text-secondary text-ink-600 mb-5">
-          Here's what we noticed about this commitment:
+        <p className="text-secondary text-ink-600 mb-4">
+          This payment differs significantly from your usual financial activity.
         </p>
 
-        <ul className="flex flex-col gap-2.5 mb-5">
-          {reasons.slice(0, 3).map((reason, i) => (
-            <li key={i} className="flex gap-2.5 text-secondary text-ink-900">
-              <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
-              {reason}
-            </li>
-          ))}
-        </ul>
+        {/* Reassuring institutional notice (§22) */}
+        <div className="p-3 bg-bg-subtle rounded-md border border-border mb-4 text-caption text-ink-600">
+          <strong className="text-ink-900 font-medium">Your payment has NOT been sent.</strong> Your balance remains safe and untouched while you verify.
+        </div>
 
-        <button
-          onClick={toggleExpanded}
-          className="flex items-center gap-1.5 text-secondary text-ink-600 hover:text-ink-900 mb-6 transition-colors duration-[120ms] ease-out"
-        >
-          <ChevronDown size={16} className={`transition-transform duration-[120ms] ease-out ${expanded ? 'rotate-180' : ''}`} />
-          Why am I seeing this?
-        </button>
+        <div className="mb-4">
+          <span className="text-caption font-medium uppercase tracking-wider text-ink-400 block mb-2">
+            Detected Signals:
+          </span>
+          <ul className="flex flex-col gap-2">
+            {reasons.slice(0, 3).map((reason, i) => (
+              <li key={i} className="flex items-start gap-2.5 text-secondary text-ink-900 text-xs">
+                <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${cfg.dot}`} />
+                <span>{reason}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {expanded && (
-          <div className="rounded-[10px] border border-border p-4 text-secondary text-ink-600 mb-6">
-            Latchpoint compares this action against your typical patterns — amounts, timing,
-            recipients, and how this transaction was carried out — before it's confirmed, not after.
-            {decision === 'BLOCK' && (
-              <>
-                {' '}This combination of signals is unusual enough that we're not able to let it
-                proceed automatically.
-              </>
-            )}
-          </div>
+        {reasons.length > 3 && (
+          <button
+            onClick={toggleExpanded}
+            className="flex items-center gap-1 text-caption text-ink-400 hover:text-ink-900 mb-4 cursor-pointer"
+          >
+            <span>{expanded ? 'Less detail' : `${reasons.length - 3} more signals`}</span>
+            <ChevronDown size={14} className={`transition-transform duration-150 ${expanded ? 'rotate-180' : ''}`} />
+          </button>
         )}
 
-        <div className="flex flex-col gap-2.5">
+        {expanded && reasons.length > 3 && (
+          <ul className="flex flex-col gap-2 mb-4 pl-4 border-l-2 border-border text-caption text-ink-600">
+            {reasons.slice(3).map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex flex-col gap-2 pt-2 border-t border-border">
           {cfg.primaryLabel && (
-            <Button variant="primary" onClick={handlePrimary} className="w-full">
+            <Button variant="primary" onClick={handlePrimary}>
               {cfg.primaryLabel}
             </Button>
           )}
-          <Button variant="secondary" onClick={handleCancel} className="w-full">
-            Cancel
+          <Button variant="ghost" onClick={handleCancel}>
+            Cancel Payment
           </Button>
-          {decision === 'BLOCK' && (
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              className="text-center text-secondary text-ink-600 hover:text-ink-900 mt-1 transition-colors duration-[120ms] ease-out"
-            >
-              Contact Support
-            </a>
-          )}
         </div>
       </div>
     </div>

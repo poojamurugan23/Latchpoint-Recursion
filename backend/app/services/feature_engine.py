@@ -75,9 +75,16 @@ def compute_personal_baseline(txns: list[Transaction]) -> dict:
     hours = [t.created_at.hour for t in txns]
     typical_hour_range = (min(hours), max(hours))
 
-    sorted_txns = sorted(txns, key=lambda t: t.created_at)
+    def _to_utc(dt):
+        if dt is None:
+            return datetime.min.replace(tzinfo=timezone.utc)
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        return dt
+
+    sorted_txns = sorted(txns, key=lambda t: _to_utc(t.created_at))
     gaps = [
-        (sorted_txns[i].created_at - sorted_txns[i - 1].created_at).total_seconds() / 86400
+        (_to_utc(sorted_txns[i].created_at) - _to_utc(sorted_txns[i - 1].created_at)).total_seconds() / 86400
         for i in range(1, len(sorted_txns))
     ]
     typical_gap_days = float(np.mean(gaps)) if gaps else 1.0

@@ -7,8 +7,7 @@ from slowapi.errors import RateLimitExceeded
 from app.config import settings
 from app.database import Base, engine, SessionLocal
 from app import models  # noqa: F401 - ensures all models are registered on Base
-from app.rate_limit import limiter
-from app.routers import auth, users, payees, transactions, events, risk, cases, kpi
+from app.routers import auth, users, payees, transactions, events, risk, cases, kpi, admin
 from app.error_handling import register_exception_handlers
 
 app = FastAPI(title="Latchpoint")
@@ -41,6 +40,7 @@ app.include_router(events.router)
 app.include_router(risk.router)
 app.include_router(cases.router)
 app.include_router(kpi.router)
+app.include_router(admin.router)
 
 
 @app.get("/api/health")
