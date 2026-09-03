@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { Clock } from 'lucide-react'
-import Layout from '../components/Layout'
-import Card from '../components/Card'
-import Button from '../components/Button'
-import { api } from '../api/client'
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Clock } from "lucide-react";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import Button from "../components/Button";
+import { api } from "../api/client";
 
 export default function HoldReview() {
-  const { id } = useParams()
-  const [txn, setTxn] = useState(null)
+  const { id } = useParams();
+  const [txn, setTxn] = useState(null);
 
   useEffect(() => {
-    api.get(`/transactions/${id}`).then(setTxn)
-  }, [id])
+    api.get(`/transactions/${id}`).then(setTxn);
+  }, [id]);
 
   return (
     <Layout>
@@ -24,15 +24,21 @@ export default function HoldReview() {
           Under review
         </h1>
         <p className="font-sans text-body text-ink-600 mb-8 max-w-sm mx-auto">
-          We've paused this transaction for a closer look. This usually takes less than 2 hours — you'll be notified as soon as it's resolved.
+          We've paused this transaction for a closer look. This usually takes
+          less than 2 hours — you'll be notified as soon as it's resolved.
         </p>
 
         {txn && (
           <Card className="text-left mb-8">
-            <p className="text-secondary font-medium text-ink-600 mb-3">Why this was held:</p>
+            <p className="text-secondary font-medium text-ink-600 mb-3">
+              Why this was held:
+            </p>
             <ul className="flex flex-col gap-2.5">
               {(txn.reasons || []).map((r, i) => (
-                <li key={i} className="text-secondary text-ink-900 flex items-start gap-2.5">
+                <li
+                  key={i}
+                  className="text-secondary text-ink-900 flex items-start gap-2.5"
+                >
                   <span className="mt-2 w-1.5 h-1.5 rounded-full bg-hold flex-shrink-0" />
                   <span>{r}</span>
                 </li>
@@ -46,5 +52,5 @@ export default function HoldReview() {
         </Link>
       </div>
     </Layout>
-  )
+  );
 }

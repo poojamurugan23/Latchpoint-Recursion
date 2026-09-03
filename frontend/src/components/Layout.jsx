@@ -1,25 +1,36 @@
-import { NavLink, Link } from 'react-router-dom'
-import { LayoutDashboard, ArrowLeftRight, LineChart, ListOrdered, Users, BarChart3, LogOut } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { NavLink, Link } from "react-router-dom";
+import {
+  LayoutDashboard,
+  ArrowLeftRight,
+  LineChart,
+  ListOrdered,
+  Users,
+  BarChart3,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/transfer', label: 'Transfer', icon: ArrowLeftRight },
-  { to: '/trade', label: 'Trade', icon: LineChart },
-  { to: '/activity', label: 'Activity', icon: ListOrdered },
-  { to: '/payees', label: 'Payees', icon: Users },
-  { to: '/kpi', label: 'Insights', icon: BarChart3 },
-]
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/transfer", label: "Transfer", icon: ArrowLeftRight },
+  { to: "/trade", label: "Trade", icon: LineChart },
+  { to: "/activity", label: "Activity", icon: ListOrdered },
+  { to: "/payees", label: "Payees", icon: Users },
+  { to: "/kpi", label: "Insights", icon: BarChart3 },
+];
 
 export default function Layout({ children }) {
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-border bg-white sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link to="/dashboard" className="font-display text-xl font-semibold tracking-tight text-accent">
+            <Link
+              to="/dashboard"
+              className="font-display text-xl font-semibold tracking-tight text-accent"
+            >
               Latchpoint
             </Link>
             <nav className="flex items-center gap-1">
@@ -31,8 +42,8 @@ export default function Layout({ children }) {
                   className={({ isActive }) =>
                     `flex items-center gap-1.5 rounded-sm px-3 py-2 text-secondary transition-colors duration-[120ms] ease-out ${
                       isActive
-                        ? 'bg-accent-tint text-accent font-medium'
-                        : 'text-ink-600 hover:text-ink-900 hover:bg-bg-subtle'
+                        ? "bg-accent-tint text-accent font-medium"
+                        : "text-ink-600 hover:text-ink-900 hover:bg-bg-subtle"
                     }`
                   }
                 >
@@ -63,5 +74,5 @@ export default function Layout({ children }) {
       </header>
       <main className="max-w-5xl mx-auto px-6 py-10">{children}</main>
     </div>
-  )
+  );
 }

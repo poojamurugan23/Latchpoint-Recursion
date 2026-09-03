@@ -1,34 +1,34 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Activity, Network, Layers } from 'lucide-react'
-import Button from '../components/Button'
-import { useAuth } from '../context/AuthContext'
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Activity, Network, Layers } from "lucide-react";
+import Button from "../components/Button";
+import { useAuth } from "../context/AuthContext";
 
 export default function Landing() {
-  const [scrolled, setScrolled] = useState(false)
-  const [loadingDemo, setLoadingDemo] = useState(false)
-  const [error, setError] = useState('')
-  const { demoLogin, user } = useAuth()
-  const navigate = useNavigate()
+  const [scrolled, setScrolled] = useState(false);
+  const [loadingDemo, setLoadingDemo] = useState(false);
+  const [error, setError] = useState("");
+  const { demoLogin, user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleScroll() {
-      setScrolled(window.scrollY > 20)
+      setScrolled(window.scrollY > 20);
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   async function handleDemoLogin() {
-    setError('')
-    setLoadingDemo(true)
+    setError("");
+    setLoadingDemo(true);
     try {
-      await demoLogin()
-      navigate('/dashboard')
+      await demoLogin();
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.message || 'Failed to start demo session')
+      setError(err.message || "Failed to start demo session");
     } finally {
-      setLoadingDemo(false)
+      setLoadingDemo(false);
     }
   }
 
@@ -37,7 +37,9 @@ export default function Landing() {
       {/* 1. Nav */}
       <header
         className={`sticky top-0 z-40 transition-colors duration-150 ease-out ${
-          scrolled ? 'border-b border-border bg-white/95 backdrop-blur-sm' : 'border-b border-transparent bg-transparent'
+          scrolled
+            ? "border-b border-border bg-white/95 backdrop-blur-sm"
+            : "border-b border-transparent bg-transparent"
         }`}
       >
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -47,13 +49,19 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             {user ? (
               <Link to="/dashboard">
-                <Button variant="secondary" className="text-secondary py-2 px-4">
+                <Button
+                  variant="secondary"
+                  className="text-secondary py-2 px-4"
+                >
                   Open Dashboard
                 </Button>
               </Link>
             ) : (
               <Link to="/login">
-                <Button variant="secondary" className="text-secondary py-2 px-4">
+                <Button
+                  variant="secondary"
+                  className="text-secondary py-2 px-4"
+                >
                   Sign In
                 </Button>
               </Link>
@@ -72,7 +80,8 @@ export default function Landing() {
             See the risk before it becomes irreversible.
           </h1>
           <p className="font-sans text-body text-ink-600 max-w-[520px] mb-8">
-            Risk in the sequence, network, and context around an otherwise legitimate action, surfaced in the seconds before commitment.
+            Risk in the sequence, network, and context around an otherwise
+            legitimate action, surfaced in the seconds before commitment.
           </p>
 
           <div className="flex items-center gap-4">
@@ -82,7 +91,7 @@ export default function Landing() {
               disabled={loadingDemo}
               className="py-3 px-6"
             >
-              {loadingDemo ? 'Entering…' : 'Enter Live Demo →'}
+              {loadingDemo ? "Entering…" : "Enter Live Demo →"}
             </Button>
             <Link to="/login">
               <Button variant="secondary" className="py-3 px-6">
@@ -101,9 +110,12 @@ export default function Landing() {
               <div className="p-2 border border-border rounded-sm text-ink-600 mb-4">
                 <Activity size={18} />
               </div>
-              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">Sequence</h3>
+              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">
+                Sequence
+              </h3>
               <p className="font-sans text-[13px] leading-[20px] text-ink-600">
-                Detects cumulative same-day drift, rapid pacing, and uncharacteristic behavioral pauses before money moves.
+                Detects cumulative same-day drift, rapid pacing, and
+                uncharacteristic behavioral pauses before money moves.
               </p>
             </div>
 
@@ -111,9 +123,12 @@ export default function Landing() {
               <div className="p-2 border border-border rounded-sm text-ink-600 mb-4">
                 <Network size={18} />
               </div>
-              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">Network</h3>
+              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">
+                Network
+              </h3>
               <p className="font-sans text-[13px] leading-[20px] text-ink-600">
-                Surfaces shared device fingerprints, proxy routing, and cross-payee structural connections in real time.
+                Surfaces shared device fingerprints, proxy routing, and
+                cross-payee structural connections in real time.
               </p>
             </div>
 
@@ -121,9 +136,12 @@ export default function Landing() {
               <div className="p-2 border border-border rounded-sm text-ink-600 mb-4">
                 <Layers size={18} />
               </div>
-              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">Context</h3>
+              <h3 className="font-sans text-secondary font-semibold text-ink-900 mb-2">
+                Context
+              </h3>
               <p className="font-sans text-[13px] leading-[20px] text-ink-600">
-                Flags repeated negative-outcome sequences and sudden deviations from established personal baselines.
+                Flags repeated negative-outcome sequences and sudden deviations
+                from established personal baselines.
               </p>
             </div>
           </div>
@@ -136,11 +154,9 @@ export default function Landing() {
           <p className="font-sans text-caption text-ink-400">
             Latchpoint · Pre-commitment risk intelligence
           </p>
-          <p className="font-sans text-caption text-ink-400">
-            White Studio v2
-          </p>
+          <p className="font-sans text-caption text-ink-400">White Studio v2</p>
         </div>
       </footer>
     </div>
-  )
+  );
 }

@@ -1,30 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ListOrdered } from 'lucide-react'
-import Layout from '../components/Layout'
-import Card from '../components/Card'
-import RiskBadge from '../components/RiskBadge'
-import EmptyState from '../components/EmptyState'
-import { SkeletonTable } from '../components/Skeleton'
-import { api } from '../api/client'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ListOrdered } from "lucide-react";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import RiskBadge from "../components/RiskBadge";
+import EmptyState from "../components/EmptyState";
+import { SkeletonTable } from "../components/Skeleton";
+import { api } from "../api/client";
 
-const FILTERS = ['ALL', 'ALLOW', 'VERIFY', 'HOLD', 'BLOCK']
+const FILTERS = ["ALL", "ALLOW", "VERIFY", "HOLD", "BLOCK"];
 
 export default function Activity() {
-  const navigate = useNavigate()
-  const [transactions, setTransactions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('ALL')
+  const navigate = useNavigate();
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("ALL");
 
   useEffect(() => {
     api
-      .get('/transactions?limit=100')
+      .get("/transactions?limit=100")
       .then(setTransactions)
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered =
-    filter === 'ALL' ? transactions : transactions.filter((t) => t.decision === filter)
+    filter === "ALL"
+      ? transactions
+      : transactions.filter((t) => t.decision === filter);
 
   return (
     <Layout>
@@ -41,8 +43,8 @@ export default function Activity() {
             onClick={() => setFilter(f)}
             className={`rounded-sm px-3.5 py-1.5 text-caption font-semibold transition-colors duration-[120ms] ease-out ${
               filter === f
-                ? 'bg-accent-tint text-accent'
-                : 'text-ink-600 hover:text-ink-900 hover:bg-bg-subtle'
+                ? "bg-accent-tint text-accent"
+                : "text-ink-600 hover:text-ink-900 hover:bg-bg-subtle"
             }`}
           >
             {f}
@@ -57,11 +59,15 @@ export default function Activity() {
           <EmptyState
             icon={ListOrdered}
             message={
-              filter === 'ALL'
-                ? 'No transactions yet. Complete a transfer or trade to build your risk timeline.'
+              filter === "ALL"
+                ? "No transactions yet. Complete a transfer or trade to build your risk timeline."
                 : `No transactions evaluated with '${filter}'.`
             }
-            action={filter === 'ALL' ? { label: 'New Transfer', to: '/transfer' } : null}
+            action={
+              filter === "ALL"
+                ? { label: "New Transfer", to: "/transfer" }
+                : null
+            }
           />
         </Card>
       ) : (
@@ -76,19 +82,21 @@ export default function Activity() {
                 <div>
                   <p className="text-secondary font-medium text-ink-900 capitalize">
                     {t.type}
-                    {t.symbol ? ` · ${t.symbol}` : ''}
+                    {t.symbol ? ` · ${t.symbol}` : ""}
                   </p>
                   <p className="text-caption text-ink-600 mt-0.5">
-                    ₹{t.amount.toLocaleString('en-IN')} ·{' '}
+                    ₹{t.amount.toLocaleString("en-IN")} ·{" "}
                     {new Date(t.created_at).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
                     })}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-caption text-ink-400 capitalize">{t.status}</span>
+                  <span className="text-caption text-ink-400 capitalize">
+                    {t.status}
+                  </span>
                   <RiskBadge decision={t.decision} />
                   <span className="text-caption text-ink-400">→</span>
                 </div>
@@ -98,5 +106,5 @@ export default function Activity() {
         </Card>
       )}
     </Layout>
-  )
+  );
 }

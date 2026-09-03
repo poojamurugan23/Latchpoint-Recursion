@@ -1,116 +1,123 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ChevronLeft } from 'lucide-react'
-import Layout from '../components/Layout'
-import Card from '../components/Card'
-import Input from '../components/Input'
-import Button from '../components/Button'
-import Toast from '../components/Toast'
-import PreCommitmentGate from '../components/PreCommitmentGate'
-import StepUpModal from '../components/StepUpModal'
-import { useEventTracker } from '../context/EventTrackerContext'
-import { api } from '../api/client'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import Toast from "../components/Toast";
+import PreCommitmentGate from "../components/PreCommitmentGate";
+import StepUpModal from "../components/StepUpModal";
+import { useEventTracker } from "../context/EventTrackerContext";
+import { api } from "../api/client";
 
 export default function Transfer() {
-  const navigate = useNavigate()
-  const { trackEvent } = useEventTracker()
+  const navigate = useNavigate();
+  const { trackEvent } = useEventTracker();
 
-  const [step, setStep] = useState('form') // form | review
-  const [payees, setPayees] = useState([])
-  const [amount, setAmount] = useState('')
-  const [payeeId, setPayeeId] = useState('')
-  const [newPayeeName, setNewPayeeName] = useState('')
-  const [addingPayee, setAddingPayee] = useState(false)
+  const [step, setStep] = useState("form"); // form | review
+  const [payees, setPayees] = useState([]);
+  const [amount, setAmount] = useState("");
+  const [payeeId, setPayeeId] = useState("");
+  const [newPayeeName, setNewPayeeName] = useState("");
+  const [addingPayee, setAddingPayee] = useState(false);
 
-  const [transactionId, setTransactionId] = useState(null)
-  const [evaluation, setEvaluation] = useState(null) // { decision, reasons, risk_score }
-  const [showToast, setShowToast] = useState(false)
-  const [showStepUp, setShowStepUp] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
+  const [transactionId, setTransactionId] = useState(null);
+  const [evaluation, setEvaluation] = useState(null); // { decision, reasons, risk_score }
+  const [showToast, setShowToast] = useState(false);
+  const [showStepUp, setShowStepUp] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    trackEvent('page_view', { path: '/transfer' })
-    api.get('/payees').then(setPayees)
-  }, [trackEvent])
+    trackEvent("page_view", { path: "/transfer" });
+    api.get("/payees").then(setPayees);
+  }, [trackEvent]);
 
   function handleAmountChange(e) {
-    const value = e.target.value
-    setAmount(value)
-    trackEvent('amount_change', { new_amount: value })
+    const value = e.target.value;
+    setAmount(value);
+    trackEvent("amount_change", { new_amount: value });
   }
 
   function handlePayeeSelect(e) {
-    const id = e.target.value
-    setPayeeId(id)
-    trackEvent('payee_selected', { payee_id: id, is_new_payee: false })
+    const id = e.target.value;
+    setPayeeId(id);
+    trackEvent("payee_selected", { payee_id: id, is_new_payee: false });
   }
 
   async function handleAddPayee() {
-    if (!newPayeeName.trim()) return
-    const payee = await api.post('/payees', {
+    if (!newPayeeName.trim()) return;
+    const payee = await api.post("/payees", {
       name: newPayeeName,
       masked_account_number: `****${Math.floor(1000 + Math.random() * 9000)}`,
-    })
-    setPayees((p) => [...p, payee])
-    setPayeeId(String(payee.id))
-    trackEvent('payee_selected', { payee_id: payee.id, is_new_payee: true })
-    setNewPayeeName('')
-    setAddingPayee(false)
+    });
+    setPayees((p) => [...p, payee]);
+    setPayeeId(String(payee.id));
+    trackEvent("payee_selected", { payee_id: payee.id, is_new_payee: true });
+    setNewPayeeName("");
+    setAddingPayee(false);
   }
 
   function handleReview(e) {
-    e.preventDefault()
-    setStep('review')
-    trackEvent('review_reached')
+    e.preventDefault();
+    setStep("review");
+    trackEvent("review_reached");
   }
 
   function handleBackToEdit() {
-    trackEvent('back_navigation', { from_path: 'review', to_path: 'form' })
-    setStep('form')
+    trackEvent("back_navigation", { from_path: "review", to_path: "form" });
+    setStep("form");
   }
 
   async function handleConfirm() {
-    setSubmitting(true)
+    setSubmitting(true);
     try {
-      const prep = await api.post('/transactions/prepare', {
-        type: 'transfer',
+      const prep = await api.post("/transactions/prepare", {
+        type: "transfer",
         amount: parseFloat(amount),
         payee_id: parseInt(payeeId, 10),
-      })
-      setTransactionId(prep.transaction_id)
+      });
+      setTransactionId(prep.transaction_id);
 
-      const result = await api.post(`/risk/evaluate/${prep.transaction_id}`)
-      setEvaluation(result)
-      trackEvent('gate_shown', { decision: result.decision }, prep.transaction_id)
+      const result = await api.post(`/risk/evaluate/${prep.transaction_id}`);
+      setEvaluation(result);
+      trackEvent(
+        "gate_shown",
+        { decision: result.decision },
+        prep.transaction_id,
+      );
 
-      if (result.decision === 'ALLOW') {
-        await api.post(`/transactions/${prep.transaction_id}/confirm`)
-        setShowToast(true)
+      if (result.decision === "ALLOW") {
+        await api.post(`/transactions/${prep.transaction_id}/confirm`);
+        setShowToast(true);
       }
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
   async function handleVerifySubmit(code) {
-    const res = await api.post(`/transactions/${transactionId}/step-up/verify`, { otp_code: code })
-    if (res.status === 'completed') {
-      setShowStepUp(false)
-      navigate('/activity')
+    const res = await api.post(
+      `/transactions/${transactionId}/step-up/verify`,
+      { otp_code: code },
+    );
+    if (res.status === "completed") {
+      setShowStepUp(false);
+      navigate("/activity");
     }
   }
 
   async function handleCancelGate() {
-    if (transactionId) await api.post(`/transactions/${transactionId}/cancel`)
-    setEvaluation(null)
-    setStep('form')
+    if (transactionId) await api.post(`/transactions/${transactionId}/cancel`);
+    setEvaluation(null);
+    setStep("form");
   }
 
   function handleHoldSubmit() {
-    navigate(`/holds/${transactionId}`)
+    navigate(`/holds/${transactionId}`);
   }
 
-  const selectedPayee = payees.find((p) => String(p.id) === String(payeeId))
+  const selectedPayee = payees.find((p) => String(p.id) === String(payeeId));
 
   return (
     <Layout>
@@ -119,7 +126,7 @@ export default function Transfer() {
           Transfer money
         </h1>
 
-        {step === 'form' && (
+        {step === "form" && (
           <Card>
             <form onSubmit={handleReview} className="flex flex-col gap-5">
               <Input
@@ -127,17 +134,28 @@ export default function Transfer() {
                 type="number"
                 min="1"
                 value={amount}
-                onFocus={() => trackEvent('field_focus', { field_name: 'amount' })}
+                onFocus={() =>
+                  trackEvent("field_focus", { field_name: "amount" })
+                }
                 onChange={handleAmountChange}
-                onBlur={() => trackEvent('field_edit', { field_name: 'amount', value_length: amount.length })}
+                onBlur={() =>
+                  trackEvent("field_edit", {
+                    field_name: "amount",
+                    value_length: amount.length,
+                  })
+                }
                 required
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-secondary font-medium text-ink-600">Payee</label>
+                <label className="text-secondary font-medium text-ink-600">
+                  Payee
+                </label>
                 <select
                   value={payeeId}
-                  onFocus={() => trackEvent('field_focus', { field_name: 'payee' })}
+                  onFocus={() =>
+                    trackEvent("field_focus", { field_name: "payee" })
+                  }
                   onChange={handlePayeeSelect}
                   className="w-full rounded-[10px] border border-border bg-white px-3 py-3 text-body text-ink-900 outline-none transition-all duration-[120ms] ease-out focus:border-accent focus:shadow-[0_0_0_3px_rgba(35,38,92,0.08)]"
                   required
@@ -161,7 +179,11 @@ export default function Transfer() {
                     onChange={(e) => setNewPayeeName(e.target.value)}
                     className="flex-1"
                   />
-                  <Button type="button" variant="secondary" onClick={handleAddPayee}>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleAddPayee}
+                  >
                     Add
                   </Button>
                 </div>
@@ -175,14 +197,18 @@ export default function Transfer() {
                 </button>
               )}
 
-              <Button type="submit" disabled={!amount || !payeeId} className="w-full mt-2">
+              <Button
+                type="submit"
+                disabled={!amount || !payeeId}
+                className="w-full mt-2"
+              >
                 Review
               </Button>
             </form>
           </Card>
         )}
 
-        {step === 'review' && (
+        {step === "review" && (
           <Card>
             <button
               onClick={handleBackToEdit}
@@ -195,12 +221,14 @@ export default function Transfer() {
               <div className="flex justify-between items-center text-secondary border-b border-border pb-3">
                 <span className="text-ink-600">Amount</span>
                 <span className="text-ink-900 font-semibold">
-                  ₹{parseFloat(amount || 0).toLocaleString('en-IN')}
+                  ₹{parseFloat(amount || 0).toLocaleString("en-IN")}
                 </span>
               </div>
               <div className="flex justify-between items-center text-secondary border-b border-border pb-3">
                 <span className="text-ink-600">Recipient</span>
-                <span className="text-ink-900 font-semibold">{selectedPayee?.name}</span>
+                <span className="text-ink-900 font-semibold">
+                  {selectedPayee?.name}
+                </span>
               </div>
               <div className="flex justify-between items-center text-secondary">
                 <span className="text-ink-600">Account</span>
@@ -210,14 +238,18 @@ export default function Transfer() {
               </div>
             </div>
 
-            <Button onClick={handleConfirm} disabled={submitting} className="w-full">
-              {submitting ? 'Evaluating risk…' : 'Confirm commitment'}
+            <Button
+              onClick={handleConfirm}
+              disabled={submitting}
+              className="w-full"
+            >
+              {submitting ? "Evaluating risk…" : "Confirm commitment"}
             </Button>
           </Card>
         )}
       </div>
 
-      {evaluation && evaluation.decision !== 'ALLOW' && !showStepUp && (
+      {evaluation && evaluation.decision !== "ALLOW" && !showStepUp && (
         <PreCommitmentGate
           decision={evaluation.decision}
           reasons={evaluation.reasons}
@@ -232,8 +264,8 @@ export default function Transfer() {
           reasons={evaluation?.reasons}
           onSubmit={handleVerifySubmit}
           onCancel={() => {
-            setShowStepUp(false)
-            handleCancelGate()
+            setShowStepUp(false);
+            handleCancelGate();
           }}
         />
       )}
@@ -241,8 +273,8 @@ export default function Transfer() {
       <Toast
         show={showToast}
         message="Looks good — transfer completed."
-        onDone={() => navigate('/activity')}
+        onDone={() => navigate("/activity")}
       />
     </Layout>
-  )
+  );
 }
