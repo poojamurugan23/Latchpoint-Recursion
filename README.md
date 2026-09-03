@@ -43,7 +43,8 @@ Pre-Commitment Gate respond differently to each:
 
 | Scenario | Action | Expect |
 |---|---|---|
-| Clean | Transfer ~₹1,900 to "Rent - Sunview Apartments" | Quick toast, no modal (ALLOW) |
+| Clean 1 | Transfer ~₹1,900 to "Rent - Sunview Apartments" | Quick toast, no modal (ALLOW) |
+| Clean 2 | Transfer ~₹900 to "FiberNet Broadband" | Quick toast, no modal (ALLOW) |
 | Drift | Transfer ~₹2,700 to "Rent - Sunview Apartments" (this becomes the 4th transfer today) | Gate: HOLD |
 | Network | Transfer ~₹3,500 to "QuickCash Transfers" (shares a device fingerprint with 2 other payees) | Gate: VERIFY/HOLD/BLOCK |
 | Repeat-loss | Trade ~₹12,000 on symbol "ZYX" (3 prior losing trades on this symbol) | Gate: BLOCK |
