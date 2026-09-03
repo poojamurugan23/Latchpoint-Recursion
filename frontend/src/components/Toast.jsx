@@ -20,7 +20,7 @@ export default function Toast({ message, show, onDone, durationMs = 2200 }) {
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
       }`}
     >
-      <div className="flex items-center gap-2.5 rounded-md bg-surface border border-border shadow-md px-4 py-3 text-sm text-text-primary">
+      <div className="flex items-center gap-2.5 rounded-md bg-white border border-border shadow-sm px-4 py-3 text-secondary text-ink-900">
         <CheckCircle2 size={18} className="text-allow" />
         {message}
       </div>
