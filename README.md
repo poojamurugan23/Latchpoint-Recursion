@@ -45,9 +45,12 @@ Open http://localhost:5173 and log in as `demo@latchpoint.app` / `demo1234`.
 
 ## Live demo scenarios
 
-The demo user starts with 10 clean historical transactions (a stable personal
-baseline) plus three seeded setups. Run these through the UI to see the
-Pre-Commitment Gate respond differently to each:
+The demo user (`demo@latchpoint.app` / `demo1234`) is seeded already-calibrated
+(10 clean historical transactions forming a stable personal baseline) plus
+three seeded setups, so every scenario below evaluates immediately instead of
+sitting through calibration. Run these through the UI to see the
+Pre-Commitment Gate — with its live staged analysis (Baseline → Sequence →
+Network → Context → Behavior) — respond differently to each:
 
 | Scenario | Action | Expect |
 |---|---|---|
@@ -61,15 +64,42 @@ Re-run `python seed_demo_data.py` any time after deleting `backend/latchpoint.db
 to reset the demo user to a fresh state (it's a no-op if the demo user already
 exists — delete the DB file first for a clean reset).
 
+**To see calibration instead** (the first-10-transactions flow, the "Pattern is
+ready" moment, and the Dashboard's calibration progress bar), register a brand
+new account — new users always start in `calibrating` status with none of the
+above shortcuts.
+
 ## Architecture
 
-- **Backend**: FastAPI + SQLAlchemy + SQLite (`backend/app`), JWT auth.
+- **Backend**: FastAPI + SQLAlchemy + SQLite (`backend/app`), JWT auth, rate
+  limiting on `/api/auth/*` and `/api/risk/evaluate*` (`slowapi`), structured
+  JSON logging (`app/logging_config.py`), and a centralized error handler so
+  every error response is `{"error": {"code", "message"}}`.
+- **Calibration**: a brand-new user's first 10 completed transactions run as
+  genuine usage with no risk verdict (`User.calibration_status`); the 10th
+  materializes a `baseline_snapshot` reference artifact and flips the user to
+  `active`. See `app/routers/transactions.py`'s `_confirm` and
+  `app/routers/risk.py`'s `_calibration_response`.
 - **ML**: scikit-learn/XGBoost + SHAP (`backend/app/ml`), retrained via the
   two `python -m app.ml.*` commands above. Feature engineering — the
-  10-transaction personal baseline window — lives in
-  `backend/app/services/feature_engine.py`.
+  10-transaction personal baseline window, plus behavioral-biometrics signals
+  (hover-before-confirm, mouse/keystroke variance, location deviation) — lives
+  in `backend/app/services/feature_engine.py`, structured as one method per
+  stage (`CommitmentContextBuilder`) so both the plain sync endpoint and the
+  SSE endpoint below share the same computation.
+- **Real-time staged evaluation**: `GET /api/risk/evaluate-stream/{id}`
+  streams one SSE `stage` event per CommitmentContext block as it's actually
+  computed (Baseline/Sequence/Network/Context/Behavioral), then a final
+  `verdict` event — no artificial delay, this is the real computation made
+  visible. The plain `POST /api/risk/evaluate/{id}` still exists as a
+  synchronous fallback.
 - **Frontend**: React (Vite, plain JSX) + Tailwind + React Router
-  (`frontend/src`), proxying `/api/*` to the backend in dev.
+  (`frontend/src`), proxying `/api/*` to the backend in dev. Behavioral
+  telemetry (`frontend/src/telemetry/BehavioralTracker.js`) captures mouse,
+  click, touch, and keystroke-timing *aggregates* client-side — raw
+  coordinates and keystroke content never leave the browser. The SSE stream is
+  read via `fetch` (`api/client.js`'s `streamGet`), not the native
+  `EventSource`, since this API's auth headers can't ride on `EventSource`.
 
 The `DATABASE_URL` in `backend/app/config.py` is the single line to change to
 swap SQLite for Postgres later.
