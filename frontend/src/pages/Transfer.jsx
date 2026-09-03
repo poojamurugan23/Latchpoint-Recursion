@@ -140,7 +140,7 @@ export default function Transfer() {
       })
       setTransactionId(prep.transaction_id)
       setAnalyzing(true)
-    } catch (err) {
+    } catch {
       setSubmitting(false)
     }
   }
