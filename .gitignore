@@ -7,6 +7,8 @@ backend/app/ml/synthetic_transactions.csv
 backend/app/ml/model_artifact.pkl
 *.pyc
 
-# Frontend
+# Frontend & Node
+node_modules/
 frontend/node_modules/
 frontend/dist/
+
