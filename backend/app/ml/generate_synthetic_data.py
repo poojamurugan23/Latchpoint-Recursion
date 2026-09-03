@@ -22,8 +22,35 @@ N_USERS = 2000
 OUT_PATH = "app/ml/synthetic_transactions.csv"
 
 
+def behavioral_features(is_risky: bool) -> dict:
+    """Plausible behavioral-biometrics values (Phase 3 §3). Clean sessions show
+    natural human variance; risky sessions show the automation/coercion
+    signature — near-instant confirmation, near-zero mouse/keystroke variance,
+    and unfamiliar locations."""
+    if is_risky and random.random() < 0.7:
+        return {
+            "confirm_hover_ms": max(0.0, np.random.normal(60, 30)),
+            "mouse_direction_changes": random.randint(0, 1),
+            "idle_ms_before_confirm": max(0.0, np.random.normal(80, 40)),
+            "keystroke_interval_std": max(0.0, np.random.normal(5, 3)),
+            "location_deviation_km": max(0.0, np.random.normal(400, 250)),
+            "is_new_location": 1,
+            "device_and_location_mismatch": int(random.random() < 0.6),
+        }
+    return {
+        "confirm_hover_ms": max(0.0, np.random.normal(800, 400)),
+        "mouse_direction_changes": max(0, int(np.random.normal(8, 3))),
+        "idle_ms_before_confirm": max(0.0, np.random.normal(1200, 600)),
+        "keystroke_interval_std": max(0.0, np.random.normal(60, 20)),
+        "location_deviation_km": max(0.0, np.random.normal(2, 3)),
+        "is_new_location": int(random.random() < 0.05),
+        "device_and_location_mismatch": 0,
+    }
+
+
 def make_row(**kwargs):
     row = {col: 0 for col in FEATURE_COLUMNS}
+    row.update(behavioral_features(is_risky=bool(kwargs.get("label"))))
     row.update(kwargs)
     return row
 

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import resolve_session
-from app.models.user import User
+from app.models.user import User, CALIBRATION_WINDOW
 from app.models.account import Account
 from app.models.session import UserSession
 from app.models.transaction import Transaction
@@ -16,6 +16,7 @@ from app.schemas.transaction import (
     TransactionOut,
 )
 from app.security import get_current_user
+from app.services.feature_engine import materialize_baseline_snapshot
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
 
@@ -93,7 +94,22 @@ def _confirm(db: Session, txn: Transaction):
     txn.confirmed_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(txn)
-    return {"status": txn.status, "confirmed_at": txn.confirmed_at}
+
+    user = db.get(User, txn.user_id)
+    completed_calibration = False
+    if user is not None and user.calibration_status == "calibrating":
+        user.calibrated_txn_count += 1
+        if user.calibrated_txn_count >= CALIBRATION_WINDOW:
+            user.calibration_status = "active"
+            user.baseline_snapshot = materialize_baseline_snapshot(db, user.id)
+            completed_calibration = True
+        db.commit()
+
+    return {
+        "status": txn.status,
+        "confirmed_at": txn.confirmed_at,
+        "completed_calibration": completed_calibration,
+    }
 
 
 @router.post("/{transaction_id}/cancel")
