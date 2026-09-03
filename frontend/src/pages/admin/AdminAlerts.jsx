@@ -31,7 +31,9 @@ export default function AdminAlerts() {
     try {
       await api.patch(`/admin/alerts/${alertId}`, { status: newStatus });
       setAlerts((prev) =>
-        prev.map((a) => (a.alert_id === alertId ? { ...a, status: newStatus } : a))
+        prev.map((a) =>
+          a.alert_id === alertId ? { ...a, status: newStatus } : a,
+        ),
       );
     } catch {
       // best effort
@@ -41,8 +43,14 @@ export default function AdminAlerts() {
   const filtered = alerts.filter((a) => {
     if (statusFilter !== "ALL" && a.status !== statusFilter) return false;
     if (riskFilter === "HIGH" && a.risk_score < 70) return false;
-    if (riskFilter === "MODERATE" && (a.risk_score < 50 || a.risk_score >= 70)) return false;
-    if (searchQuery && !a.user_name.toLowerCase().includes(searchQuery.toLowerCase()) && !a.alert_id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (riskFilter === "MODERATE" && (a.risk_score < 50 || a.risk_score >= 70))
+      return false;
+    if (
+      searchQuery &&
+      !a.user_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !a.alert_id.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -55,13 +63,17 @@ export default function AdminAlerts() {
               ALERT CENTER
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Triage and investigate elevated risk events intercepted at pre-commitment boundaries
+              Triage and investigate elevated risk events intercepted at
+              pre-commitment boundaries
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="relative w-48">
-              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6E7891]" />
+              <Search
+                size={13}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6E7891]"
+              />
               <input
                 type="text"
                 placeholder="Search user or alert..."
@@ -110,7 +122,9 @@ export default function AdminAlerts() {
               <Bell size={14} className="text-rose-400" />
               <span>Active Risk Alerts ({filtered.length})</span>
             </div>
-            <span className="text-[11px] text-[#8E96A8]">Change status inline or inspect commitment details</span>
+            <span className="text-[11px] text-[#8E96A8]">
+              Change status inline or inspect commitment details
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -128,14 +142,27 @@ export default function AdminAlerts() {
               </thead>
               <tbody className="divide-y divide-[#1D2130]">
                 {filtered.map((a) => (
-                  <tr key={a.alert_id} className="hover:bg-[#1C202E] transition-colors">
-                    <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">{a.alert_id}</td>
-                    <td className="py-2.5 px-3 font-mono text-[#8E96A8] text-[11px]">{a.time}</td>
-                    <td className="py-2.5 px-3">
-                      <div className="font-medium text-white">{a.user_name}</div>
-                      <div className="text-[10px] text-[#6E7891] font-mono">{a.user_id}</div>
+                  <tr
+                    key={a.alert_id}
+                    className="hover:bg-[#1C202E] transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">
+                      {a.alert_id}
                     </td>
-                    <td className="py-2.5 px-3 text-[#B0B8C8] max-w-xs truncate">{a.trigger}</td>
+                    <td className="py-2.5 px-3 font-mono text-[#8E96A8] text-[11px]">
+                      {a.time}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <div className="font-medium text-white">
+                        {a.user_name}
+                      </div>
+                      <div className="text-[10px] text-[#6E7891] font-mono">
+                        {a.user_id}
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-3 text-[#B0B8C8] max-w-xs truncate">
+                      {a.trigger}
+                    </td>
                     <td className="py-2.5 px-3 text-center">
                       <span
                         className={`font-mono text-xs font-semibold px-2 py-0.5 rounded ${
@@ -150,7 +177,9 @@ export default function AdminAlerts() {
                     <td className="py-2.5 px-3">
                       <select
                         value={a.status}
-                        onChange={(e) => updateStatus(a.alert_id, e.target.value)}
+                        onChange={(e) =>
+                          updateStatus(a.alert_id, e.target.value)
+                        }
                         className="bg-[#181C2A] border border-[#2B334C] text-[10px] font-semibold uppercase text-white rounded px-2 py-1 focus:outline-none cursor-pointer"
                       >
                         <option value="NEW">NEW</option>

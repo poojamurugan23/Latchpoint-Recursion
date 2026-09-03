@@ -16,8 +16,12 @@ export default function PrivacyModal({ isOpen, onClose }) {
               <ShieldCheck size={18} />
             </div>
             <div>
-              <h3 className="font-semibold text-body text-ink-900">Privacy & Data Governance</h3>
-              <p className="text-caption text-ink-400">Institutional pre-commitment telemetry controls</p>
+              <h3 className="font-semibold text-body text-ink-900">
+                Privacy & Data Governance
+              </h3>
+              <p className="text-caption text-ink-400">
+                Institutional pre-commitment telemetry controls
+              </p>
             </div>
           </div>
           <button
@@ -34,9 +38,14 @@ export default function PrivacyModal({ isOpen, onClose }) {
             <div className="flex items-start gap-2.5">
               <Lock size={16} className="text-allow shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-ink-900 text-caption uppercase tracking-wider">Zero-Secret Guarantee</p>
+                <p className="font-medium text-ink-900 text-caption uppercase tracking-wider">
+                  Zero-Secret Guarantee
+                </p>
                 <p className="text-ink-600 text-caption mt-1">
-                  Latchpoint strictly analyzes <strong>anonymized interaction aggregates</strong> (mouse velocities, pause intervals, and transition ordering). We <strong>never</strong> capture, store, or inspect:
+                  Latchpoint strictly analyzes{" "}
+                  <strong>anonymized interaction aggregates</strong> (mouse
+                  velocities, pause intervals, and transition ordering). We{" "}
+                  <strong>never</strong> capture, store, or inspect:
                 </p>
                 <ul className="mt-2 space-y-1 text-caption text-ink-600 list-disc list-inside">
                   <li>Passwords, PINs, or credentials</li>
@@ -51,8 +60,12 @@ export default function PrivacyModal({ isOpen, onClose }) {
           <div className="space-y-3 pt-1">
             <div className="flex items-center justify-between p-3 rounded-md border border-border">
               <div>
-                <div className="text-secondary font-medium text-ink-900">Behavioral Biometrics Telemetry</div>
-                <div className="text-caption text-ink-400">Aggregated movement velocity & dwell hesitation metrics</div>
+                <div className="text-secondary font-medium text-ink-900">
+                  Behavioral Biometrics Telemetry
+                </div>
+                <div className="text-caption text-ink-400">
+                  Aggregated movement velocity & dwell hesitation metrics
+                </div>
               </div>
               <button
                 type="button"
@@ -71,8 +84,13 @@ export default function PrivacyModal({ isOpen, onClose }) {
 
             <div className="flex items-center justify-between p-3 rounded-md border border-border">
               <div>
-                <div className="text-secondary font-medium text-ink-900">Location Verification</div>
-                <div className="text-caption text-ink-400">Anonymized geographic distance checks for account takeover detection</div>
+                <div className="text-secondary font-medium text-ink-900">
+                  Location Verification
+                </div>
+                <div className="text-caption text-ink-400">
+                  Anonymized geographic distance checks for account takeover
+                  detection
+                </div>
               </div>
               <button
                 type="button"

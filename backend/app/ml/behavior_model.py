@@ -116,3 +116,4 @@ def score_behavior(telemetry_or_features: dict) -> tuple[float, list[str]]:
             reasons.append("Interaction biometrics match typical human baseline")
 
     return round(float(normalized), 1), reasons
+

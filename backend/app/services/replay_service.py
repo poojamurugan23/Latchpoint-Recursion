@@ -233,3 +233,4 @@ def get_scenario(scenario_key: str) -> dict[str, Any]:
     """Returns predefined scenario metadata."""
     key = scenario_key.lower()
     return PREDEFINED_SCENARIOS.get(key, PREDEFINED_SCENARIOS["signature"])
+

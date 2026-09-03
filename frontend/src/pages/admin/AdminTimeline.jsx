@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import { api } from "../../api/client";
-import { TrendingUp, AlertTriangle, ShieldCheck, Clock, CheckCircle2 } from "lucide-react";
+import {
+  TrendingUp,
+  AlertTriangle,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
 import {
   LineChart,
   Line,
@@ -44,7 +50,8 @@ export default function AdminTimeline() {
               DYNAMIC RISK ACCUMULATION TIMELINE
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Live trajectory plotting session risk escalation across sequential micro-actions
+              Live trajectory plotting session risk escalation across sequential
+              micro-actions
             </p>
           </div>
         </div>
@@ -58,17 +65,30 @@ export default function AdminTimeline() {
                 Risk Score Trajectory (0–100)
               </h2>
             </div>
-            <span className="text-[10px] text-[#6E7891] font-mono">Click point to inspect signal deltas</span>
+            <span className="text-[10px] text-[#6E7891] font-mono">
+              Click point to inspect signal deltas
+            </span>
           </div>
 
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeline} onClick={(e) => e && e.activePayload && setSelectedPoint(e.activePayload[0].payload)}>
+              <LineChart
+                data={timeline}
+                onClick={(e) =>
+                  e &&
+                  e.activePayload &&
+                  setSelectedPoint(e.activePayload[0].payload)
+                }
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="#222738" />
                 <XAxis dataKey="time" stroke="#6E7891" fontSize={11} />
                 <YAxis domain={[0, 100]} stroke="#6E7891" fontSize={11} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: "#141722", borderColor: "#2B334C", fontSize: "11px" }}
+                  contentStyle={{
+                    backgroundColor: "#141722",
+                    borderColor: "#2B334C",
+                    fontSize: "11px",
+                  }}
                   itemStyle={{ color: "#fff" }}
                 />
                 <Line
@@ -95,26 +115,39 @@ export default function AdminTimeline() {
             {selectedPoint ? (
               <div className="space-y-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[#6E7891] font-mono">{selectedPoint.time}</span>
-                  <span className="font-semibold text-white font-mono text-base">{selectedPoint.event}</span>
+                  <span className="text-[#6E7891] font-mono">
+                    {selectedPoint.time}
+                  </span>
+                  <span className="font-semibold text-white font-mono text-base">
+                    {selectedPoint.event}
+                  </span>
                 </div>
 
                 <div className="p-3 bg-[#1A1E2B] rounded border border-[#262C3E]">
                   <div className="flex items-center justify-between">
                     <span className="text-[#8E96A8]">Cumulative Risk:</span>
-                    <span className="font-mono text-sm font-semibold text-rose-400">{selectedPoint.risk_score}/100</span>
+                    <span className="font-mono text-sm font-semibold text-rose-400">
+                      {selectedPoint.risk_score}/100
+                    </span>
                   </div>
                   <div className="flex items-center justify-between mt-1 text-[11px]">
                     <span className="text-[#6E7891]">Step Delta:</span>
-                    <span className="font-mono text-amber-400 font-semibold">{selectedPoint.delta} points</span>
+                    <span className="font-mono text-amber-400 font-semibold">
+                      {selectedPoint.delta} points
+                    </span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] uppercase font-semibold text-[#6E7891]">Triggered Reasons:</span>
+                  <span className="text-[10px] uppercase font-semibold text-[#6E7891]">
+                    Triggered Reasons:
+                  </span>
                   <ul className="mt-1 space-y-1">
                     {(selectedPoint.reasons || []).map((r, i) => (
-                      <li key={i} className="text-[#B0B8C8] flex items-start gap-1.5 text-[11px]">
+                      <li
+                        key={i}
+                        className="text-[#B0B8C8] flex items-start gap-1.5 text-[11px]"
+                      >
                         <span className="text-amber-400">•</span>
                         <span>{r}</span>
                       </li>
@@ -123,7 +156,9 @@ export default function AdminTimeline() {
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-[#8E96A8]">Click any event on the chart to inspect signals.</div>
+              <div className="text-xs text-[#8E96A8]">
+                Click any event on the chart to inspect signals.
+              </div>
             )}
           </div>
 
@@ -145,19 +180,23 @@ export default function AdminTimeline() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[#6E7891] text-[11px] w-14">{step.time}</span>
+                    <span className="font-mono text-[#6E7891] text-[11px] w-14">
+                      {step.time}
+                    </span>
                     <div className="font-semibold text-white">{step.event}</div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[11px] text-amber-400 font-medium">{step.delta}</span>
+                    <span className="font-mono text-[11px] text-amber-400 font-medium">
+                      {step.delta}
+                    </span>
                     <span
                       className={`font-mono font-semibold px-2 py-0.5 rounded text-[11px] ${
                         step.risk_score >= 70
                           ? "bg-rose-950/60 text-rose-400"
                           : step.risk_score >= 50
-                          ? "bg-amber-950/60 text-amber-400"
-                          : "bg-emerald-950/60 text-emerald-400"
+                            ? "bg-amber-950/60 text-amber-400"
+                            : "bg-emerald-950/60 text-emerald-400"
                       }`}
                     >
                       {step.risk_score}

@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../../components/AdminLayout";
 import { api } from "../../api/client";
-import { Users, ArrowUpRight, Search, ShieldCheck, RefreshCw } from "lucide-react";
+import {
+  Users,
+  ArrowUpRight,
+  Search,
+  ShieldCheck,
+  RefreshCw,
+} from "lucide-react";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -25,10 +31,11 @@ export default function AdminUsers() {
     loadUsers();
   }, []);
 
-  const filtered = users.filter((u) =>
-    u.name.toLowerCase().includes(query.toLowerCase()) ||
-    u.email.toLowerCase().includes(query.toLowerCase()) ||
-    u.display_id.toLowerCase().includes(query.toLowerCase())
+  const filtered = users.filter(
+    (u) =>
+      u.name.toLowerCase().includes(query.toLowerCase()) ||
+      u.email.toLowerCase().includes(query.toLowerCase()) ||
+      u.display_id.toLowerCase().includes(query.toLowerCase()),
   );
 
   return (
@@ -40,12 +47,16 @@ export default function AdminUsers() {
               USERS & BEHAVIORAL BASELINES
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Personal transaction baselines, rolling window calibrations, and user risk scores
+              Personal transaction baselines, rolling window calibrations, and
+              user risk scores
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7891]" />
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7891]"
+              />
               <input
                 type="text"
                 placeholder="Search by name, email, or ID..."
@@ -70,7 +81,9 @@ export default function AdminUsers() {
               <Users size={14} className="text-blue-400" />
               <span>Registered Accounts ({filtered.length})</span>
             </div>
-            <span className="text-[11px] text-[#8E96A8]">Click user row to inspect personal baseline & deviation</span>
+            <span className="text-[11px] text-[#8E96A8]">
+              Click user row to inspect personal baseline & deviation
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -88,11 +101,18 @@ export default function AdminUsers() {
               </thead>
               <tbody className="divide-y divide-[#1D2130]">
                 {filtered.map((u) => (
-                  <tr key={u.id} className="hover:bg-[#1C202E] transition-colors">
-                    <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">{u.display_id}</td>
+                  <tr
+                    key={u.id}
+                    className="hover:bg-[#1C202E] transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">
+                      {u.display_id}
+                    </td>
                     <td className="py-2.5 px-3">
                       <div className="font-medium text-white">{u.name}</div>
-                      <div className="text-[10px] text-[#6E7891] font-mono">{u.email}</div>
+                      <div className="text-[10px] text-[#6E7891] font-mono">
+                        {u.email}
+                      </div>
                     </td>
                     <td className="py-2.5 px-3">
                       <span
@@ -102,19 +122,25 @@ export default function AdminUsers() {
                             : "bg-blue-950/60 text-blue-400 border border-blue-800/60"
                         }`}
                       >
-                        {u.calibration_status === "active" ? "Active (Calibrated)" : `Calibrating (${u.calibrated_count}/10)`}
+                        {u.calibration_status === "active"
+                          ? "Active (Calibrated)"
+                          : `Calibrating (${u.calibrated_count}/10)`}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 font-mono text-[#B0B8C8]">{u.typical_amount_range}</td>
-                    <td className="py-2.5 px-3 text-right font-mono text-white">{u.total_transactions}</td>
+                    <td className="py-2.5 px-3 font-mono text-[#B0B8C8]">
+                      {u.typical_amount_range}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-mono text-white">
+                      {u.total_transactions}
+                    </td>
                     <td className="py-2.5 px-3 text-center">
                       <span
                         className={`font-mono text-xs font-semibold px-2 py-0.5 rounded ${
                           u.current_risk_score >= 70
                             ? "text-rose-400 bg-rose-950/50"
                             : u.current_risk_score >= 50
-                            ? "text-amber-400 bg-amber-950/50"
-                            : "text-emerald-400 bg-emerald-950/50"
+                              ? "text-amber-400 bg-amber-950/50"
+                              : "text-emerald-400 bg-emerald-950/50"
                         }`}
                       >
                         {u.current_risk_score} {u.risk_level}

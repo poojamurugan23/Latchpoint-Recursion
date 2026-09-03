@@ -33,7 +33,11 @@ const ADMIN_NAV = [
   { to: "/admin/system", label: "System Health", icon: Server },
 ];
 
-export default function AdminLayout({ children, activeScenario, onScenarioChange }) {
+export default function AdminLayout({
+  children,
+  activeScenario,
+  onScenarioChange,
+}) {
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState("signature");
   const [loadingScenario, setLoadingScenario] = useState(false);
@@ -72,7 +76,9 @@ export default function AdminLayout({ children, activeScenario, onScenarioChange
           <div className="h-4 w-px bg-[#262C3E]" />
           <div className="flex items-center gap-2 text-caption text-[#8E96A8]">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-mono text-xs">TELEMETRY STREAM: CONNECTED</span>
+            <span className="font-mono text-xs">
+              TELEMETRY STREAM: CONNECTED
+            </span>
           </div>
         </div>
 
@@ -175,7 +181,10 @@ export default function AdminLayout({ children, activeScenario, onScenarioChange
         </main>
       </div>
 
-      <PrivacyModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+      <PrivacyModal
+        isOpen={privacyOpen}
+        onClose={() => setPrivacyOpen(false)}
+      />
     </div>
   );
 }

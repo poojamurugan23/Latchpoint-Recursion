@@ -32,7 +32,8 @@ export default function AdminModels() {
               MODEL INTELLIGENCE & FEATURE ATTRIBUTION
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Production model registry, inference latencies, and local SHAP feature attributions
+              Production model registry, inference latencies, and local SHAP
+              feature attributions
             </p>
           </div>
           <button
@@ -54,7 +55,9 @@ export default function AdminModels() {
                 <div>
                   <div className="flex items-center gap-2">
                     <Cpu size={16} className="text-[#8E9BFF]" />
-                    <h3 className="font-semibold text-white text-sm">{m.name}</h3>
+                    <h3 className="font-semibold text-white text-sm">
+                      {m.name}
+                    </h3>
                   </div>
                   <p className="text-xs text-[#8E96A8] mt-0.5">{m.type}</p>
                 </div>
@@ -65,16 +68,26 @@ export default function AdminModels() {
 
               <div className="grid grid-cols-3 gap-2 text-[11px] bg-[#11131C] p-2.5 rounded border border-[#1E2332] font-mono">
                 <div>
-                  <span className="text-[#6E7891] block text-[10px]">VERSION</span>
+                  <span className="text-[#6E7891] block text-[10px]">
+                    VERSION
+                  </span>
                   <span className="text-white">{m.version}</span>
                 </div>
                 <div>
-                  <span className="text-[#6E7891] block text-[10px]">INPUTS</span>
-                  <span className="text-white">{m.input_features} features</span>
+                  <span className="text-[#6E7891] block text-[10px]">
+                    INPUTS
+                  </span>
+                  <span className="text-white">
+                    {m.input_features} features
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[#6E7891] block text-[10px]">LATENCY</span>
-                  <span className="text-emerald-400">{m.last_inference_ms} ms</span>
+                  <span className="text-[#6E7891] block text-[10px]">
+                    LATENCY
+                  </span>
+                  <span className="text-emerald-400">
+                    {m.last_inference_ms} ms
+                  </span>
                 </div>
               </div>
 
@@ -84,8 +97,13 @@ export default function AdminModels() {
                 </span>
                 <div className="space-y-1.5 text-xs">
                   {(m.feature_importance || []).map((f) => (
-                    <div key={f.feature} className="flex items-center justify-between">
-                      <span className="text-[#8E96A8] text-[11px] font-mono">{f.feature}</span>
+                    <div
+                      key={f.feature}
+                      className="flex items-center justify-between"
+                    >
+                      <span className="text-[#8E96A8] text-[11px] font-mono">
+                        {f.feature}
+                      </span>
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-[#1C202E] rounded-full overflow-hidden">
                           <div
@@ -104,7 +122,9 @@ export default function AdminModels() {
 
               <div className="pt-3 border-t border-[#1E2332] text-[11px] text-[#6E7891] flex items-center justify-between">
                 <span>Evaluation Status:</span>
-                <span className="text-white font-medium">{m.evaluation_status}</span>
+                <span className="text-white font-medium">
+                  {m.evaluation_status}
+                </span>
               </div>
             </div>
           ))}

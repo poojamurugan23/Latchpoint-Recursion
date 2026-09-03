@@ -47,7 +47,9 @@ Latchpoint operates at the **last reversible moment**: intervening in the second
 Latchpoint provides two tailored, purpose-built interfaces:
 
 ### A. Customer Banking Experience
+
 Clean, restrained institutional consumer banking interface preserving user trust:
+
 - **Dashboard (`/dashboard`)**: Account balances, personal baseline calibration progress (10-transaction window), recent transactions.
 - **Transfer (`/transfer`)**: Multi-step transfer wizard instrumented with passive telemetry.
 - **Pre-Commitment Gate Interceptor**: Non-accusatory step-up challenge triggered at confirmation when anomalous signals are detected. Reassures the user: _"Your payment has NOT been sent."_
@@ -56,7 +58,9 @@ Clean, restrained institutional consumer banking interface preserving user trust
 - **Privacy & Data Governance Modal**: Transparent controls with zero-secret guarantee (raw passwords and OTPs are never stored).
 
 ### B. Risk Operations Console (Admin Experience)
+
 High-density institutional command center designed for fintech risk analysts and security engineers:
+
 - **Command Center (`/admin` & `/admin/overview`)**: Top 6 KPIs (Active Sessions, Pending Commitments, Elevated-Risk, Interventions Today, Prevented Exposure, P95 Decision Latency), live risk feed, system health, and calculated risk distribution.
 - **Live Sessions (`/admin/live`)**: Real-time session monitoring table with expandable event timelines and duration tracking.
 - **Users & Baselines (`/admin/users` & `/admin/users/:id`)**: Personal baseline window comparisons ($+4.9\sigma$ statistical deviation), historical activity charts, and signal breakdowns.
@@ -75,16 +79,17 @@ High-density institutional command center designed for fintech risk analysts and
 
 Latchpoint separates policy decisions from raw anomaly detection through a configurable 6-factor fusion layer:
 
-| Signal Dimension | Weight | Engine & Technique | Primary Inputs |
-| :--- | :---: | :--- | :--- |
-| **Behavioral Biometrics** | 20% | `IsolationForest` (Scikit-Learn) | Hover dwell time, cursor velocity, direction changes, idle intervals, typing cadence variance |
-| **Sequence Journey** | 20% | Markov State Transitions | Transition ordering, back-navigations, repeated reviews, rapid completion bursts |
-| **Transaction Dynamics** | 20% | Rolling Baseline ($\sigma$ deviation) | Amount vs personal mean, time of day anomaly, velocity |
-| **Historical Outcomes** | 15% | Counterparty Track Record | Dispute streaks, prior loss history, recipient trust longevity |
-| **Contextual Timing** | 15% | In-Session Drift Engine | Newly added beneficiary within session, multiple amount revisions |
-| **Network Topology** | 10% | Relational Multi-Hop Analyzer | Shared device fingerprints across distinct payees, VPN/proxy flags, IP collision density |
+| Signal Dimension          | Weight | Engine & Technique                    | Primary Inputs                                                                                |
+| :------------------------ | :----: | :------------------------------------ | :-------------------------------------------------------------------------------------------- |
+| **Behavioral Biometrics** |  20%   | `IsolationForest` (Scikit-Learn)      | Hover dwell time, cursor velocity, direction changes, idle intervals, typing cadence variance |
+| **Sequence Journey**      |  20%   | Markov State Transitions              | Transition ordering, back-navigations, repeated reviews, rapid completion bursts              |
+| **Transaction Dynamics**  |  20%   | Rolling Baseline ($\sigma$ deviation) | Amount vs personal mean, time of day anomaly, velocity                                        |
+| **Historical Outcomes**   |  15%   | Counterparty Track Record             | Dispute streaks, prior loss history, recipient trust longevity                                |
+| **Contextual Timing**     |  15%   | In-Session Drift Engine               | Newly added beneficiary within session, multiple amount revisions                             |
+| **Network Topology**      |  10%   | Relational Multi-Hop Analyzer         | Shared device fingerprints across distinct payees, VPN/proxy flags, IP collision density      |
 
 ### Decision Policy Tiers
+
 - **ALLOW (0–30)**: Standard baseline transaction; executed without friction.
 - **MONITOR (31–50)**: Mild anomaly; logged and silently monitored.
 - **STEP-UP (51–70)**: Moderate deviation; triggers non-accusatory OTP or biometric challenge.
@@ -123,10 +128,12 @@ The Risk Console header includes a persistent **Demo Scenario Selector**:
 ## Quickstart
 
 ### Prerequisites
+
 - Python 3.11+
 - Node.js 18+
 
 ### 1. Backend Setup
+
 ```bash
 cd backend
 python -m venv venv
@@ -141,6 +148,7 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 ### 2. Frontend Setup
+
 ```bash
 cd frontend
 npm install
@@ -150,6 +158,7 @@ npm run dev
 ```
 
 ### 3. Demo Credentials
+
 - **Customer Portal**: `http://localhost:5173/login` (click **"Demo Login"** or use `demo@latchpoint.app` / `demo1234`)
 - **Risk Operations Console**: `http://localhost:5173/admin`
 
@@ -165,6 +174,7 @@ cd backend
 ```
 
 Frontend production build check:
+
 ```bash
 cd frontend
 npm run build

@@ -180,3 +180,4 @@ def build_full_network_graph(db: Session, highlight_user_id: int | None = None) 
             "risky_entities_count": sum(1 for n in nodes if n["risk"] >= 60.0),
         }
     }
+

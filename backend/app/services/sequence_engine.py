@@ -143,3 +143,4 @@ def analyze_sequence(events: list[dict[str, Any]] | list[Any]) -> tuple[float, l
     }
 
     return final_score, reasons, features
+

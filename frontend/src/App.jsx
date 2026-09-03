@@ -104,7 +104,10 @@ export default function App() {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/users/:id" element={<AdminUserProfile />} />
         <Route path="/admin/commitments" element={<AdminCommitments />} />
-        <Route path="/admin/commitments/:id" element={<AdminCommitmentDetail />} />
+        <Route
+          path="/admin/commitments/:id"
+          element={<AdminCommitmentDetail />}
+        />
         <Route path="/admin/timeline" element={<AdminTimeline />} />
         <Route path="/admin/network" element={<AdminNetwork />} />
         <Route path="/admin/alerts" element={<AdminAlerts />} />

@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../../components/AdminLayout";
 import { api } from "../../api/client";
-import { Clock, ArrowUpRight, Search, CheckCircle2, AlertTriangle, XCircle, RefreshCw } from "lucide-react";
+import {
+  Clock,
+  ArrowUpRight,
+  Search,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  RefreshCw,
+} from "lucide-react";
 
 export default function AdminCommitments() {
   const [commitments, setCommitments] = useState([]);
@@ -29,22 +37,42 @@ export default function AdminCommitments() {
     (c) =>
       c.user_name.toLowerCase().includes(query.toLowerCase()) ||
       c.user_id.toLowerCase().includes(query.toLowerCase()) ||
-      c.recipient.toLowerCase().includes(query.toLowerCase())
+      c.recipient.toLowerCase().includes(query.toLowerCase()),
   );
 
   function getDecisionBadge(decision) {
     switch (decision) {
       case "ALLOW":
-        return <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60"><CheckCircle2 size={12} /> ALLOW</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
+            <CheckCircle2 size={12} /> ALLOW
+          </span>
+        );
       case "MONITOR":
-        return <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60">MONITOR</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-800/60">
+            MONITOR
+          </span>
+        );
       case "STEP-UP":
       case "VERIFY":
-        return <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60"><AlertTriangle size={12} /> STEP-UP</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-800/60">
+            <AlertTriangle size={12} /> STEP-UP
+          </span>
+        );
       case "HOLD":
-        return <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-orange-950/60 text-orange-400 border border-orange-800/60"><Clock size={12} /> HOLD</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-orange-950/60 text-orange-400 border border-orange-800/60">
+            <Clock size={12} /> HOLD
+          </span>
+        );
       case "BLOCK":
-        return <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60"><XCircle size={12} /> BLOCK</span>;
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-950/60 text-rose-400 border border-rose-800/60">
+            <XCircle size={12} /> BLOCK
+          </span>
+        );
       default:
         return <span className="text-[11px] text-[#8E96A8]">{decision}</span>;
     }
@@ -59,12 +87,16 @@ export default function AdminCommitments() {
               PRE-COMMITMENT GATE QUEUE
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Financial commitments intercepted at the final confirmation gate prior to ledger execution
+              Financial commitments intercepted at the final confirmation gate
+              prior to ledger execution
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative w-64">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7891]" />
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E7891]"
+              />
               <input
                 type="text"
                 placeholder="Search user or recipient..."
@@ -89,7 +121,9 @@ export default function AdminCommitments() {
               <Clock size={14} className="text-amber-400" />
               <span>Intercepted Commitments ({filtered.length})</span>
             </div>
-            <span className="text-[11px] text-[#8E96A8]">Click commitment to inspect signals & intervene</span>
+            <span className="text-[11px] text-[#8E96A8]">
+              Click commitment to inspect signals & intervene
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -107,13 +141,24 @@ export default function AdminCommitments() {
               </thead>
               <tbody className="divide-y divide-[#1D2130]">
                 {filtered.map((c) => (
-                  <tr key={c.id} className="hover:bg-[#1C202E] transition-colors">
-                    <td className="py-2.5 px-3 font-mono text-[#8E96A8] text-[11px]">{c.time}</td>
-                    <td className="py-2.5 px-3">
-                      <div className="font-medium text-white">{c.user_name}</div>
-                      <div className="text-[10px] text-[#6E7891] font-mono">{c.user_id}</div>
+                  <tr
+                    key={c.id}
+                    className="hover:bg-[#1C202E] transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-mono text-[#8E96A8] text-[11px]">
+                      {c.time}
                     </td>
-                    <td className="py-2.5 px-3 font-medium text-[#B0B8C8]">{c.recipient}</td>
+                    <td className="py-2.5 px-3">
+                      <div className="font-medium text-white">
+                        {c.user_name}
+                      </div>
+                      <div className="text-[10px] text-[#6E7891] font-mono">
+                        {c.user_id}
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-3 font-medium text-[#B0B8C8]">
+                      {c.recipient}
+                    </td>
                     <td className="py-2.5 px-3 text-right font-mono font-semibold text-white">
                       ₹{c.amount.toLocaleString()}
                     </td>
@@ -123,14 +168,16 @@ export default function AdminCommitments() {
                           c.risk_score >= 70
                             ? "text-rose-400 bg-rose-950/50"
                             : c.risk_score >= 50
-                            ? "text-amber-400 bg-amber-950/50"
-                            : "text-emerald-400 bg-emerald-950/50"
+                              ? "text-amber-400 bg-amber-950/50"
+                              : "text-emerald-400 bg-emerald-950/50"
                         }`}
                       >
                         {c.risk_score}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3">{getDecisionBadge(c.decision)}</td>
+                    <td className="py-2.5 px-3">
+                      {getDecisionBadge(c.decision)}
+                    </td>
                     <td className="py-2.5 px-3 text-right">
                       <Link
                         to={`/admin/commitments/${c.id}`}

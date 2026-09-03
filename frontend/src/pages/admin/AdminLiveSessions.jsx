@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import { api } from "../../api/client";
-import { Activity, Clock, ShieldAlert, ChevronDown, ChevronUp, MapPin, Laptop, RefreshCw } from "lucide-react";
+import {
+  Activity,
+  Clock,
+  ShieldAlert,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Laptop,
+  RefreshCw,
+} from "lucide-react";
 
 export default function AdminLiveSessions() {
   const [sessions, setSessions] = useState([]);
@@ -42,7 +51,8 @@ export default function AdminLiveSessions() {
               LIVE SESSION MONITORING
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Real-time telemetry streams, active browser contexts, and micro-behavioral timelines
+              Real-time telemetry streams, active browser contexts, and
+              micro-behavioral timelines
             </p>
           </div>
           <button
@@ -60,7 +70,9 @@ export default function AdminLiveSessions() {
               <Activity size={14} className="text-emerald-400" />
               <span>Active Telemetry Sessions ({sessions.length})</span>
             </div>
-            <span className="text-[11px] text-[#8E96A8]">Click row to inspect live event timeline</span>
+            <span className="text-[11px] text-[#8E96A8]">
+              Click row to inspect live event timeline
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -90,34 +102,52 @@ export default function AdminLiveSessions() {
                           isExpanded ? "bg-[#181C28]" : ""
                         }`}
                       >
-                        <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">{s.session_id}</td>
-                        <td className="py-2.5 px-3">
-                          <div className="font-medium text-white">{s.user_name}</div>
-                          <div className="text-[10px] text-[#6E7891] font-mono">{s.user_id}</div>
+                        <td className="py-2.5 px-3 font-mono text-[#8E9BFF] font-semibold">
+                          {s.session_id}
                         </td>
-                        <td className="py-2.5 px-3 font-mono text-[#8E96A8]">{s.start_time}</td>
-                        <td className="py-2.5 px-3 text-[#B0B8C8] font-medium">{s.current_action}</td>
+                        <td className="py-2.5 px-3">
+                          <div className="font-medium text-white">
+                            {s.user_name}
+                          </div>
+                          <div className="text-[10px] text-[#6E7891] font-mono">
+                            {s.user_id}
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-3 font-mono text-[#8E96A8]">
+                          {s.start_time}
+                        </td>
+                        <td className="py-2.5 px-3 text-[#B0B8C8] font-medium">
+                          {s.current_action}
+                        </td>
                         <td className="py-2.5 px-3 text-center">
                           <span
                             className={`font-mono text-xs font-semibold px-2 py-0.5 rounded ${
                               s.risk_score >= 70
                                 ? "text-rose-400 bg-rose-950/50"
                                 : s.risk_score >= 50
-                                ? "text-amber-400 bg-amber-950/50"
-                                : "text-emerald-400 bg-emerald-950/50"
+                                  ? "text-amber-400 bg-amber-950/50"
+                                  : "text-emerald-400 bg-emerald-950/50"
                             }`}
                           >
                             {s.risk_score} {s.risk_level}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-[#8E96A8] flex items-center gap-1">
-                          <MapPin size={11} className="shrink-0 text-[#6E7891]" />
+                          <MapPin
+                            size={11}
+                            className="shrink-0 text-[#6E7891]"
+                          />
                           <span>{s.location}</span>
                         </td>
-                        <td className="py-2.5 px-3 font-mono text-[#8E96A8]">{s.ip_address}</td>
+                        <td className="py-2.5 px-3 font-mono text-[#8E96A8]">
+                          {s.ip_address}
+                        </td>
                         <td className="py-2.5 px-3 text-[#8E96A8]">
                           <div className="flex items-center gap-1">
-                            <Laptop size={11} className="shrink-0 text-[#6E7891]" />
+                            <Laptop
+                              size={11}
+                              className="shrink-0 text-[#6E7891]"
+                            />
                             <span>{s.device}</span>
                           </div>
                         </td>
@@ -133,7 +163,11 @@ export default function AdminLiveSessions() {
                           </span>
                         </td>
                         <td className="py-2.5 px-2 text-right text-[#6E7891]">
-                          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          {isExpanded ? (
+                            <ChevronUp size={16} />
+                          ) : (
+                            <ChevronDown size={16} />
+                          )}
                         </td>
                       </tr>
 
@@ -144,7 +178,8 @@ export default function AdminLiveSessions() {
                             <div className="space-y-3">
                               <div className="flex items-center justify-between pb-2 border-b border-[#1E2332]">
                                 <span className="text-[11px] font-semibold uppercase tracking-wider text-white">
-                                  Current Session Event Sequence ({s.timeline.length} events logged)
+                                  Current Session Event Sequence (
+                                  {s.timeline.length} events logged)
                                 </span>
                                 <span className="text-[10px] font-mono text-[#6E7891]">
                                   Throttled 10Hz Client Telemetry Stream
@@ -158,8 +193,12 @@ export default function AdminLiveSessions() {
                                     className="p-2.5 bg-[#171A26] border border-[#242A3D] rounded flex flex-col justify-between"
                                   >
                                     <div className="flex items-center justify-between text-[10px] font-mono">
-                                      <span className="text-emerald-400">{ev.time}</span>
-                                      <span className="text-[#6E7891]">STEP #{idx + 1}</span>
+                                      <span className="text-emerald-400">
+                                        {ev.time}
+                                      </span>
+                                      <span className="text-[#6E7891]">
+                                        STEP #{idx + 1}
+                                      </span>
                                     </div>
                                     <div className="font-semibold text-white text-xs mt-1">
                                       {ev.type}

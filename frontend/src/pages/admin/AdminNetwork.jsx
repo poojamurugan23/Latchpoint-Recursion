@@ -33,16 +33,23 @@ export default function AdminNetwork() {
     return (graph.nodes || []).filter((n) => {
       if (filterType !== "all" && n.type !== filterType) return false;
       if (onlyRisky && n.risk < 50) return false;
-      if (searchQuery && !n.label.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (
+        searchQuery &&
+        !n.label.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+        return false;
       return true;
     });
   }, [graph.nodes, filterType, onlyRisky, searchQuery]);
 
-  const visibleNodeIds = useMemo(() => new Set(filteredNodes.map((n) => n.id)), [filteredNodes]);
+  const visibleNodeIds = useMemo(
+    () => new Set(filteredNodes.map((n) => n.id)),
+    [filteredNodes],
+  );
 
   const filteredEdges = useMemo(() => {
     return (graph.edges || []).filter(
-      (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
+      (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target),
     );
   }, [graph.edges, visibleNodeIds]);
 
@@ -95,14 +102,18 @@ export default function AdminNetwork() {
               NETWORK TOPOLOGY & ENTITY INTELLIGENCE
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Interactive relational graph detecting shared devices, proxy proxies, and counterparty clusters
+              Interactive relational graph detecting shared devices, proxy
+              proxies, and counterparty clusters
             </p>
           </div>
 
           {/* Controls toolbar */}
           <div className="flex items-center gap-3">
             <div className="relative w-48">
-              <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6E7891]" />
+              <Search
+                size={13}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6E7891]"
+              />
               <input
                 type="text"
                 placeholder="Find entity..."
@@ -172,12 +183,25 @@ export default function AdminNetwork() {
           <div className="lg:col-span-3 bg-[#11131C] border border-[#222738] rounded-md overflow-hidden relative min-h-[550px] flex items-center justify-center">
             {/* Legend Overlay */}
             <div className="absolute top-3 left-3 bg-[#141722]/80 backdrop-blur-sm border border-[#222738] rounded p-2 text-[10px] space-y-1 z-10 text-[#8E96A8]">
-              <div className="font-semibold text-white uppercase text-[9px] mb-1">Entity Legend</div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#8E9BFF]" /> User</div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#34D399]" /> Account</div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Payee</div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#A78BFA]" /> Device</div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#F87171]" /> High Risk (≥70)</div>
+              <div className="font-semibold text-white uppercase text-[9px] mb-1">
+                Entity Legend
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#8E9BFF]" /> User
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#34D399]" /> Account
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#60A5FA]" /> Payee
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#A78BFA]" /> Device
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#F87171]" /> High Risk
+                (≥70)
+              </div>
             </div>
 
             <svg
@@ -200,7 +224,9 @@ export default function AdminNetwork() {
                     y2={t.y}
                     stroke="#262C3E"
                     strokeWidth="1.2"
-                    strokeDasharray={e.relationship === "USES" ? "4 3" : undefined}
+                    strokeDasharray={
+                      e.relationship === "USES" ? "4 3" : undefined
+                    }
                   />
                 );
               })}
@@ -232,7 +258,9 @@ export default function AdminNetwork() {
                       textAnchor="middle"
                       className="pointer-events-none font-mono"
                     >
-                      {n.label.length > 15 ? `${n.label.slice(0, 13)}…` : n.label}
+                      {n.label.length > 15
+                        ? `${n.label.slice(0, 13)}…`
+                        : n.label}
                     </text>
                   </g>
                 );
@@ -259,17 +287,29 @@ export default function AdminNetwork() {
             {selectedNode ? (
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">{selectedNode.type} Entity</span>
-                  <div className="font-semibold text-white text-sm mt-0.5">{selectedNode.label}</div>
-                  <div className="font-mono text-[10px] text-[#8E9BFF]">{selectedNode.id}</div>
+                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">
+                    {selectedNode.type} Entity
+                  </span>
+                  <div className="font-semibold text-white text-sm mt-0.5">
+                    {selectedNode.label}
+                  </div>
+                  <div className="font-mono text-[10px] text-[#8E9BFF]">
+                    {selectedNode.id}
+                  </div>
                 </div>
 
                 <div className="p-2.5 bg-[#171B26] border border-[#242A3D] rounded">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#8E96A8] text-[11px]">Entity Risk Score:</span>
+                    <span className="text-[#8E96A8] text-[11px]">
+                      Entity Risk Score:
+                    </span>
                     <span
                       className={`font-mono text-xs font-semibold ${
-                        selectedNode.risk >= 70 ? "text-rose-400" : selectedNode.risk >= 50 ? "text-amber-400" : "text-emerald-400"
+                        selectedNode.risk >= 70
+                          ? "text-rose-400"
+                          : selectedNode.risk >= 50
+                            ? "text-amber-400"
+                            : "text-emerald-400"
                       }`}
                     >
                       {selectedNode.risk}/100
@@ -278,14 +318,23 @@ export default function AdminNetwork() {
                 </div>
 
                 <div>
-                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">Entity Attributes:</span>
+                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">
+                    Entity Attributes:
+                  </span>
                   <div className="mt-1 bg-[#10121A] p-2.5 rounded border border-[#1E2332] space-y-1 font-mono text-[11px]">
-                    {Object.entries(selectedNode.details || {}).map(([k, v]) => (
-                      <div key={k} className="flex items-center justify-between">
-                        <span className="text-[#6E7891]">{k}:</span>
-                        <span className="text-white truncate max-w-[120px]">{String(v)}</span>
-                      </div>
-                    ))}
+                    {Object.entries(selectedNode.details || {}).map(
+                      ([k, v]) => (
+                        <div
+                          key={k}
+                          className="flex items-center justify-between"
+                        >
+                          <span className="text-[#6E7891]">{k}:</span>
+                          <span className="text-white truncate max-w-[120px]">
+                            {String(v)}
+                          </span>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
 
@@ -295,7 +344,8 @@ export default function AdminNetwork() {
               </div>
             ) : (
               <div className="py-12 text-center text-xs text-[#6E7891]">
-                Select any node in the relationship graph to inspect details, device links, and counterparty risks.
+                Select any node in the relationship graph to inspect details,
+                device links, and counterparty risks.
               </div>
             )}
           </div>

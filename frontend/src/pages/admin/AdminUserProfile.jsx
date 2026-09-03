@@ -47,7 +47,9 @@ export default function AdminUserProfile() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="py-20 text-center text-xs text-[#8E96A8]">Loading user risk profile...</div>
+        <div className="py-20 text-center text-xs text-[#8E96A8]">
+          Loading user risk profile...
+        </div>
       </AdminLayout>
     );
   }
@@ -55,7 +57,9 @@ export default function AdminUserProfile() {
   if (!profile) {
     return (
       <AdminLayout>
-        <div className="py-20 text-center text-xs text-rose-400">User not found.</div>
+        <div className="py-20 text-center text-xs text-rose-400">
+          User not found.
+        </div>
       </AdminLayout>
     );
   }
@@ -83,7 +87,9 @@ export default function AdminUserProfile() {
                   Risk Profile
                 </span>
               </div>
-              <p className="text-[11px] text-[#8E96A8] font-mono mt-0.5">{user.email} • Calibration: {user.calibration_status}</p>
+              <p className="text-[11px] text-[#8E96A8] font-mono mt-0.5">
+                {user.email} • Calibration: {user.calibration_status}
+              </p>
             </div>
           </div>
 
@@ -94,8 +100,8 @@ export default function AdminUserProfile() {
                 fused_risk.pre_commitment_risk_score >= 70
                   ? "text-rose-400 bg-rose-950/60 border border-rose-800/60"
                   : fused_risk.pre_commitment_risk_score >= 50
-                  ? "text-amber-400 bg-amber-950/60 border border-amber-800/60"
-                  : "text-emerald-400 bg-emerald-950/60 border border-emerald-800/60"
+                    ? "text-amber-400 bg-amber-950/60 border border-amber-800/60"
+                    : "text-emerald-400 bg-emerald-950/60 border border-emerald-800/60"
               }`}
             >
               {fused_risk.pre_commitment_risk_score} {fused_risk.risk_level}
@@ -135,7 +141,9 @@ export default function AdminUserProfile() {
             </span>
             <div
               className={`text-xl font-semibold font-mono mt-1 ${
-                baseline.deviation_level === "HIGH" ? "text-rose-400" : "text-emerald-400"
+                baseline.deviation_level === "HIGH"
+                  ? "text-rose-400"
+                  : "text-emerald-400"
               }`}
             >
               {baseline.deviation_sigma} ({baseline.deviation_level})
@@ -157,7 +165,9 @@ export default function AdminUserProfile() {
                   Historical Transaction Timeline
                 </h3>
               </div>
-              <span className="text-[10px] text-[#6E7891] font-mono">Completed Transactions</span>
+              <span className="text-[10px] text-[#6E7891] font-mono">
+                Completed Transactions
+              </span>
             </div>
 
             <div className="h-56 mt-4">
@@ -167,10 +177,20 @@ export default function AdminUserProfile() {
                   <XAxis dataKey="date" stroke="#6E7891" fontSize={10} />
                   <YAxis stroke="#6E7891" fontSize={10} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#141722", borderColor: "#2B334C", fontSize: "11px" }}
+                    contentStyle={{
+                      backgroundColor: "#141722",
+                      borderColor: "#2B334C",
+                      fontSize: "11px",
+                    }}
                     itemStyle={{ color: "#fff" }}
                   />
-                  <Line type="monotone" dataKey="amount" stroke="#8E9BFF" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="amount"
+                    stroke="#8E9BFF"
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -182,24 +202,59 @@ export default function AdminUserProfile() {
               <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
                 Risk Signal Vectors
               </h3>
-              <span className="text-[10px] text-amber-400 font-mono">Active Gate</span>
+              <span className="text-[10px] text-amber-400 font-mono">
+                Active Gate
+              </span>
             </div>
 
             <div className="space-y-2 text-xs">
               {[
-                { label: "Behavioral Biometrics", score: signals.behavior, weight: "20%" },
-                { label: "Sequence Journey", score: signals.sequence, weight: "20%" },
-                { label: "Transaction Amount", score: signals.transaction, weight: "20%" },
-                { label: "Historical Outcome", score: signals.historical, weight: "15%" },
-                { label: "Contextual Timing", score: signals.context, weight: "15%" },
-                { label: "Network Relationships", score: signals.network, weight: "10%" },
+                {
+                  label: "Behavioral Biometrics",
+                  score: signals.behavior,
+                  weight: "20%",
+                },
+                {
+                  label: "Sequence Journey",
+                  score: signals.sequence,
+                  weight: "20%",
+                },
+                {
+                  label: "Transaction Amount",
+                  score: signals.transaction,
+                  weight: "20%",
+                },
+                {
+                  label: "Historical Outcome",
+                  score: signals.historical,
+                  weight: "15%",
+                },
+                {
+                  label: "Contextual Timing",
+                  score: signals.context,
+                  weight: "15%",
+                },
+                {
+                  label: "Network Relationships",
+                  score: signals.network,
+                  weight: "10%",
+                },
               ].map(({ label, score, weight }) => (
-                <div key={label} className="p-2 bg-[#171B26] border border-[#242A3D] rounded">
+                <div
+                  key={label}
+                  className="p-2 bg-[#171B26] border border-[#242A3D] rounded"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-[#8E96A8] text-[11px]">{label} ({weight})</span>
+                    <span className="text-[#8E96A8] text-[11px]">
+                      {label} ({weight})
+                    </span>
                     <span
                       className={`font-mono text-xs font-semibold ${
-                        score >= 70 ? "text-rose-400" : score >= 50 ? "text-amber-400" : "text-emerald-400"
+                        score >= 70
+                          ? "text-rose-400"
+                          : score >= 50
+                            ? "text-amber-400"
+                            : "text-emerald-400"
                       }`}
                     >
                       {score}/100

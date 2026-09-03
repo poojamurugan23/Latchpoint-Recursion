@@ -4,7 +4,10 @@ import { api } from "../../api/client";
 import { Server, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
 
 export default function AdminSystem() {
-  const [systemData, setSystemData] = useState({ pipeline: [], components: {} });
+  const [systemData, setSystemData] = useState({
+    pipeline: [],
+    components: {},
+  });
   const [selectedNode, setSelectedNode] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +39,8 @@ export default function AdminSystem() {
               SYSTEM ARCHITECTURE & REAL-TIME PIPELINE
             </h1>
             <p className="text-secondary text-[#8E96A8] text-xs mt-0.5">
-              Visual pipeline architecture of telemetry capture, multi-stage risk fusion, and the pre-commitment gate
+              Visual pipeline architecture of telemetry capture, multi-stage
+              risk fusion, and the pre-commitment gate
             </p>
           </div>
           <button
@@ -54,7 +58,9 @@ export default function AdminSystem() {
             <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
               End-to-End Execution Pipeline
             </h3>
-            <span className="text-[10px] text-emerald-400 font-mono">P95 LATENCY: 42.8 MS</span>
+            <span className="text-[10px] text-emerald-400 font-mono">
+              P95 LATENCY: 42.8 MS
+            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -73,14 +79,22 @@ export default function AdminSystem() {
                   <div>
                     <div className="flex items-center justify-between text-[10px] font-mono">
                       <span className="text-[#6E7891]">STAGE {idx + 1}</span>
-                      <span className="text-emerald-400 font-semibold">{node.latency}</span>
+                      <span className="text-emerald-400 font-semibold">
+                        {node.latency}
+                      </span>
                     </div>
-                    <div className="font-semibold text-white text-xs mt-1.5">{node.name}</div>
-                    <p className="text-[10px] text-[#8E96A8] mt-1 line-clamp-2">{node.role}</p>
+                    <div className="font-semibold text-white text-xs mt-1.5">
+                      {node.name}
+                    </div>
+                    <p className="text-[10px] text-[#8E96A8] mt-1 line-clamp-2">
+                      {node.role}
+                    </p>
                   </div>
                   <div className="mt-3 pt-2 border-t border-[#222738] flex items-center justify-between text-[10px]">
                     <span className="text-[#6E7891]">Status:</span>
-                    <span className="text-emerald-400 font-mono font-semibold">{node.status}</span>
+                    <span className="text-emerald-400 font-mono font-semibold">
+                      {node.status}
+                    </span>
                   </div>
                 </div>
               );
@@ -99,23 +113,37 @@ export default function AdminSystem() {
             {selectedNode ? (
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">Stage Name</span>
-                  <h4 className="text-base font-bold text-white mt-0.5">{selectedNode.name}</h4>
+                  <span className="text-[10px] uppercase text-[#6E7891] font-semibold">
+                    Stage Name
+                  </span>
+                  <h4 className="text-base font-bold text-white mt-0.5">
+                    {selectedNode.name}
+                  </h4>
                 </div>
 
                 <div className="p-3 bg-[#1A1E2B] rounded border border-[#262C3E]">
-                  <span className="text-[#6E7891] text-[10px] uppercase font-semibold">Architectural Function</span>
-                  <p className="text-white mt-1 leading-relaxed">{selectedNode.role}</p>
+                  <span className="text-[#6E7891] text-[10px] uppercase font-semibold">
+                    Architectural Function
+                  </span>
+                  <p className="text-white mt-1 leading-relaxed">
+                    {selectedNode.role}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-[11px] bg-[#11131D] p-3 rounded border border-[#1E2332]">
                   <div>
-                    <span className="text-[#6E7891] block">EXECUTION STATUS</span>
-                    <span className="text-emerald-400 font-mono font-semibold mt-0.5 block">{selectedNode.status}</span>
+                    <span className="text-[#6E7891] block">
+                      EXECUTION STATUS
+                    </span>
+                    <span className="text-emerald-400 font-mono font-semibold mt-0.5 block">
+                      {selectedNode.status}
+                    </span>
                   </div>
                   <div>
                     <span className="text-[#6E7891] block">STAGE OVERHEAD</span>
-                    <span className="text-white font-mono font-semibold mt-0.5 block">{selectedNode.latency}</span>
+                    <span className="text-white font-mono font-semibold mt-0.5 block">
+                      {selectedNode.latency}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -129,17 +157,26 @@ export default function AdminSystem() {
             </h3>
 
             <div className="space-y-2 text-xs">
-              {Object.entries(systemData.components || {}).map(([name, stat]) => (
-                <div key={name} className="p-2 bg-[#171B26] border border-[#242A3D] rounded flex items-center justify-between">
-                  <div>
-                    <div className="text-white font-medium text-[11px]">{name}</div>
-                    <div className="text-[10px] text-[#6E7891] font-mono">{stat.latency_ms} ms avg</div>
+              {Object.entries(systemData.components || {}).map(
+                ([name, stat]) => (
+                  <div
+                    key={name}
+                    className="p-2 bg-[#171B26] border border-[#242A3D] rounded flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="text-white font-medium text-[11px]">
+                        {name}
+                      </div>
+                      <div className="text-[10px] text-[#6E7891] font-mono">
+                        {stat.latency_ms} ms avg
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60">
+                      {stat.status}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60">
-                    {stat.status}
-                  </span>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </div>
         </div>

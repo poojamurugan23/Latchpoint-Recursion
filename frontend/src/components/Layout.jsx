@@ -97,7 +97,10 @@ export default function Layout({ children }) {
         </div>
       </header>
       <main className="max-w-6xl mx-auto px-6 py-10">{children}</main>
-      <PrivacyModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} />
+      <PrivacyModal
+        isOpen={privacyOpen}
+        onClose={() => setPrivacyOpen(false)}
+      />
     </div>
   );
 }

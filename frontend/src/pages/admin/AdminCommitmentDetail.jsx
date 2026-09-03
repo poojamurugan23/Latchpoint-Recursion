@@ -50,7 +50,9 @@ export default function AdminCommitmentDetail() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="py-20 text-center text-xs text-[#8E96A8]">Loading pre-commitment gate context...</div>
+        <div className="py-20 text-center text-xs text-[#8E96A8]">
+          Loading pre-commitment gate context...
+        </div>
       </AdminLayout>
     );
   }
@@ -58,12 +60,22 @@ export default function AdminCommitmentDetail() {
   if (!data) {
     return (
       <AdminLayout>
-        <div className="py-20 text-center text-xs text-rose-400">Commitment not found.</div>
+        <div className="py-20 text-center text-xs text-rose-400">
+          Commitment not found.
+        </div>
       </AdminLayout>
     );
   }
 
-  const { commitment, risk_signals, pre_commitment_risk, risk_level, recommendation, reasons, timeline } = data;
+  const {
+    commitment,
+    risk_signals,
+    pre_commitment_risk,
+    risk_level,
+    recommendation,
+    reasons,
+    timeline,
+  } = data;
 
   return (
     <AdminLayout>
@@ -99,8 +111,8 @@ export default function AdminCommitmentDetail() {
                 pre_commitment_risk >= 70
                   ? "text-rose-400 bg-rose-950/60 border border-rose-800/60"
                   : pre_commitment_risk >= 50
-                  ? "text-amber-400 bg-amber-950/60 border border-amber-800/60"
-                  : "text-emerald-400 bg-emerald-950/60 border border-emerald-800/60"
+                    ? "text-amber-400 bg-amber-950/60 border border-amber-800/60"
+                    : "text-emerald-400 bg-emerald-950/60 border border-emerald-800/60"
               }`}
             >
               {pre_commitment_risk}/100 ({risk_level})
@@ -121,22 +133,38 @@ export default function AdminCommitmentDetail() {
 
           <div className="flex items-center gap-6 text-xs">
             <div>
-              <span className="text-[#6E7891] text-[10px] uppercase">From (Originator)</span>
-              <div className="font-semibold text-white mt-0.5">{commitment.user_name}</div>
-              <div className="text-[10px] text-[#8E96A8] font-mono">{commitment.user_id}</div>
+              <span className="text-[#6E7891] text-[10px] uppercase">
+                From (Originator)
+              </span>
+              <div className="font-semibold text-white mt-0.5">
+                {commitment.user_name}
+              </div>
+              <div className="text-[10px] text-[#8E96A8] font-mono">
+                {commitment.user_id}
+              </div>
             </div>
 
             <ArrowRight size={16} className="text-[#6E7891]" />
 
             <div>
-              <span className="text-[#6E7891] text-[10px] uppercase">To (Recipient)</span>
-              <div className="font-semibold text-white mt-0.5">{commitment.recipient_name}</div>
-              <div className="text-[10px] text-[#8E96A8] font-mono">{commitment.recipient_id}</div>
+              <span className="text-[#6E7891] text-[10px] uppercase">
+                To (Recipient)
+              </span>
+              <div className="font-semibold text-white mt-0.5">
+                {commitment.recipient_name}
+              </div>
+              <div className="text-[10px] text-[#8E96A8] font-mono">
+                {commitment.recipient_id}
+              </div>
             </div>
 
             <div className="pl-4 border-l border-[#222738]">
-              <span className="text-[#6E7891] text-[10px] uppercase">Gate Recommendation</span>
-              <div className="font-semibold text-amber-400 mt-0.5">{recommendation}</div>
+              <span className="text-[#6E7891] text-[10px] uppercase">
+                Gate Recommendation
+              </span>
+              <div className="font-semibold text-amber-400 mt-0.5">
+                {recommendation}
+              </div>
             </div>
           </div>
         </div>
@@ -145,7 +173,12 @@ export default function AdminCommitmentDetail() {
         {actionStatus && (
           <div className="p-3 bg-[#1C2030] border border-[#2E364F] rounded text-xs text-white flex items-center justify-between">
             <span>{actionStatus}</span>
-            <button onClick={() => setActionStatus("")} className="text-[#8E96A8] hover:text-white">✕</button>
+            <button
+              onClick={() => setActionStatus("")}
+              className="text-[#8E96A8] hover:text-white"
+            >
+              ✕
+            </button>
           </div>
         )}
 
@@ -160,7 +193,10 @@ export default function AdminCommitmentDetail() {
               </h2>
               <ul className="space-y-2 text-xs">
                 {reasons.map((r, i) => (
-                  <li key={i} className="flex items-start gap-2 text-[#B0B8C8] bg-[#1A1E2B] p-2.5 rounded border border-[#262C3E]">
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-[#B0B8C8] bg-[#1A1E2B] p-2.5 rounded border border-[#262C3E]"
+                  >
                     <span className="text-amber-400 mt-0.5 font-bold">•</span>
                     <span>{r}</span>
                   </li>
@@ -174,7 +210,9 @@ export default function AdminCommitmentDetail() {
                 <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
                   Session Sequence Leading to Interception
                 </h3>
-                <span className="text-[10px] font-mono text-[#6E7891]">{timeline.length} events</span>
+                <span className="text-[10px] font-mono text-[#6E7891]">
+                  {timeline.length} events
+                </span>
               </div>
 
               <div className="mt-4 space-y-3">
@@ -185,7 +223,9 @@ export default function AdminCommitmentDetail() {
                     </span>
                     <div className="w-2 h-2 rounded-full bg-[#8E9BFF] mt-1.5 shrink-0" />
                     <div className="flex-1 bg-[#171A26] border border-[#222738] p-2 rounded">
-                      <div className="font-semibold text-white">{item.action}</div>
+                      <div className="font-semibold text-white">
+                        {item.action}
+                      </div>
                       {Object.keys(item.details || {}).length > 0 && (
                         <div className="text-[10px] text-[#8E96A8] font-mono mt-0.5">
                           {JSON.stringify(item.details)}
@@ -208,19 +248,40 @@ export default function AdminCommitmentDetail() {
 
               <div className="space-y-2 text-xs">
                 {[
-                  { label: "Behavioral Biometrics", score: risk_signals.behavior },
+                  {
+                    label: "Behavioral Biometrics",
+                    score: risk_signals.behavior,
+                  },
                   { label: "Sequence Journey", score: risk_signals.sequence },
-                  { label: "Transaction Amount", score: risk_signals.transaction },
-                  { label: "Historical Outcome", score: risk_signals.historical || 20 },
+                  {
+                    label: "Transaction Amount",
+                    score: risk_signals.transaction,
+                  },
+                  {
+                    label: "Historical Outcome",
+                    score: risk_signals.historical || 20,
+                  },
                   { label: "Contextual Timing", score: risk_signals.context },
-                  { label: "Network Relationships", score: risk_signals.network },
+                  {
+                    label: "Network Relationships",
+                    score: risk_signals.network,
+                  },
                 ].map(({ label, score }) => (
-                  <div key={label} className="p-2 bg-[#171B26] border border-[#242A3D] rounded">
+                  <div
+                    key={label}
+                    className="p-2 bg-[#171B26] border border-[#242A3D] rounded"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-[#8E96A8] text-[11px]">{label}</span>
+                      <span className="text-[#8E96A8] text-[11px]">
+                        {label}
+                      </span>
                       <span
                         className={`font-mono text-xs font-semibold ${
-                          score >= 70 ? "text-rose-400" : score >= 50 ? "text-amber-400" : "text-emerald-400"
+                          score >= 70
+                            ? "text-rose-400"
+                            : score >= 50
+                              ? "text-amber-400"
+                              : "text-emerald-400"
                         }`}
                       >
                         {score}/100
