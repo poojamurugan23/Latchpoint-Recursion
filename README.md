@@ -1,7 +1,7 @@
 # Latchpoint
 
 **Pre-Commitment Financial Risk Intelligence**  
-*Autonomous behavioral risk evaluation, sequence modeling, and real-time gate interception.*
+_Autonomous behavioral risk evaluation, sequence modeling, and real-time gate interception._
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
@@ -15,8 +15,8 @@
 
 ## Overview
 
-Most financial fraud systems ask: *"Is this transaction legitimate?"*  
-**Latchpoint** asks: *"Is committing to this **right now** — given the sequence, network, and context surrounding it — risky, even when the action itself looks completely legitimate?"*
+Most financial fraud systems ask: _"Is this transaction legitimate?"_  
+**Latchpoint** asks: _"Is committing to this **right now** — given the sequence, network, and context surrounding it — risky, even when the action itself looks completely legitimate?"_
 
 Latchpoint intervenes in the seconds **before** a transfer or trade is confirmed, not after funds have already left the account.
 
@@ -43,7 +43,7 @@ Latchpoint intervenes in the seconds **before** a transfer or trade is confirmed
 
 - **"White Studio" Visuals**: True white (`#FFFFFF`) surface, 1px hairline borders (`#EBEBEE`), restrained ink-indigo (`#23265C`) accents, and muted semantic risk tokens. Built to sit naturally alongside Stripe, Linear, Arc, or Mercury.
 - **Strict Typography Scale**:
-  - **Playfair Display**: Reserved strictly for the wordmark *"Latchpoint"*, the landing page hero headline, page titles (`<h1>`), and the Pre-Commitment Gate verdict line (*"Before you continue"*).
+  - **Playfair Display**: Reserved strictly for the wordmark _"Latchpoint"_, the landing page hero headline, page titles (`<h1>`), and the Pre-Commitment Gate verdict line (_"Before you continue"_).
   - **Montserrat**: Powers 95%+ of all copy across navigation, buttons, forms, tables, card data, badges, and captions.
 - **Public Landing Page (`/`)**: Dedicated first touchpoint with scroll-reactive header, value proposition, feature strip (Sequence, Network, Context), and dual CTAs.
 - **1-Click Live Demo Flow**: Click **"Enter Live Demo →"** to instantly sign in as the pre-seeded demo user with zero typing via a real backend JWT.
@@ -87,6 +87,7 @@ npm run dev
 Visit **`http://localhost:5173`** in your browser.
 
 > **Running Individually**:
+>
 > - Backend: `cd backend && source venv/bin/activate && uvicorn app.main:app --reload --port 8000`
 > - Frontend: `cd frontend && npm run dev`
 
@@ -98,13 +99,13 @@ Click **"Enter Live Demo →"** on the landing page (or sign in via `/login` wit
 
 The demo user starts with 10 completed historical transfers establishing a clean personal baseline (small routine payments of ₹1,800–₹2,300 to trusted utility payees).
 
-| Scenario | Flow | Action | Risk Signals | Expected Verdict |
-|:---|:---|:---|:---|:---|
-| **Clean 1** | Transfer | ₹1,900 to *"Rent - Sunview Apartments"* | In-pattern amount, trusted payee, standard time | **ALLOW**<br/>Instant confirmation with non-blocking toast. |
-| **Clean 2** | Transfer | ₹900 to *"FiberNet Broadband"* | Low amount, trusted counterparty | **ALLOW**<br/>Instant confirmation with non-blocking toast. |
-| **Drift** | Transfer | ₹2,700 to *"Rent - Sunview Apartments"* | 4th transfer in a single day; daily cumulative volume escalates to ~6x baseline | **HOLD**<br/>Pre-Commitment Gate modal opens; option to submit for compliance review. |
-| **Network** | Transfer | ₹3,500 to *"QuickCash Transfers"* | Payee shares a device fingerprint with 2 other newly added payees | **VERIFY**<br/>Pre-Commitment Gate prompts in-flight 6-digit OTP step-up verification. |
-| **Repeat-Loss** | Trade | ₹12,000 on symbol **"ZYX"** | 3 consecutive prior losing trades on symbol ZYX | **BLOCK**<br/>Terminal intervention; transaction aborted, balance preserved. |
+| Scenario        | Flow     | Action                                  | Risk Signals                                                                    | Expected Verdict                                                                       |
+| :-------------- | :------- | :-------------------------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
+| **Clean 1**     | Transfer | ₹1,900 to _"Rent - Sunview Apartments"_ | In-pattern amount, trusted payee, standard time                                 | **ALLOW**<br/>Instant confirmation with non-blocking toast.                            |
+| **Clean 2**     | Transfer | ₹900 to _"FiberNet Broadband"_          | Low amount, trusted counterparty                                                | **ALLOW**<br/>Instant confirmation with non-blocking toast.                            |
+| **Drift**       | Transfer | ₹2,700 to _"Rent - Sunview Apartments"_ | 4th transfer in a single day; daily cumulative volume escalates to ~6x baseline | **HOLD**<br/>Pre-Commitment Gate modal opens; option to submit for compliance review.  |
+| **Network**     | Transfer | ₹3,500 to _"QuickCash Transfers"_       | Payee shares a device fingerprint with 2 other newly added payees               | **VERIFY**<br/>Pre-Commitment Gate prompts in-flight 6-digit OTP step-up verification. |
+| **Repeat-Loss** | Trade    | ₹12,000 on symbol **"ZYX"**             | 3 consecutive prior losing trades on symbol ZYX                                 | **BLOCK**<br/>Terminal intervention; transaction aborted, balance preserved.           |
 
 > **Resetting Demo Data**: Delete `backend/latchpoint.db` and re-run `python seed_demo_data.py` inside `backend/`.
 
@@ -128,7 +129,7 @@ Latchpoint avoids brittle static rules by continuously evaluating a user's perso
 4. **Explainable AI (SHAP)**:
    - Binary `XGBClassifier` scores the feature vector.
    - `shap.TreeExplainer` calculates exact feature contributions.
-   - The top 3 absolute SHAP values map deterministically to clear, plain-English reasons (e.g., *"You've committed ₹37,000 today — about 6x your typical daily total."*).
+   - The top 3 absolute SHAP values map deterministically to clear, plain-English reasons (e.g., _"You've committed ₹37,000 today — about 6x your typical daily total."_).
 
 ---
 
@@ -136,30 +137,30 @@ Latchpoint avoids brittle static rules by continuously evaluating a user's perso
 
 ### Palette
 
-| Token | Hex Value | Role |
-|:---|:---|:---|
-| `--bg` | `#FFFFFF` | Primary background across all screens |
-| `--bg-subtle` | `#FAFAFA` | Table row hover states and subtle secondary surfaces |
-| `--surface` | `#FFFFFF` | Card and container backgrounds |
-| `--border` | `#EBEBEE` | 1px hairline separator |
-| `--border-strong` | `#DCDCE2` | Focus states and active dividers |
-| `--ink-900` | `#14141B` | High-contrast primary text |
-| `--ink-600` | `#63636D` | Secondary body text and labels |
-| `--ink-400` | `#9C9CA4` | Muted metadata and placeholders |
-| `--accent` | `#23265C` | Deep ink-indigo (wordmark, primary buttons, focus rings) |
-| `--accent-tint` | `#EEEEF5` | 6% accent tint for active navigation states |
-| `--allow` / `--allow-bg` | `#227A4E` / `#EAF6EE` | Allow status badge & toast icon |
-| `--verify` / `--verify-bg` | `#A8720F` / `#FBF1DF` | Verify step-up challenge |
-| `--hold` / `--hold-bg` | `#B0591F` / `#FBEEE1` | Under review hold state |
-| `--block` / `--block-bg` | `#A93434` / `#FAEAEA` | Severe block state & form errors |
+| Token                      | Hex Value             | Role                                                     |
+| :------------------------- | :-------------------- | :------------------------------------------------------- |
+| `--bg`                     | `#FFFFFF`             | Primary background across all screens                    |
+| `--bg-subtle`              | `#FAFAFA`             | Table row hover states and subtle secondary surfaces     |
+| `--surface`                | `#FFFFFF`             | Card and container backgrounds                           |
+| `--border`                 | `#EBEBEE`             | 1px hairline separator                                   |
+| `--border-strong`          | `#DCDCE2`             | Focus states and active dividers                         |
+| `--ink-900`                | `#14141B`             | High-contrast primary text                               |
+| `--ink-600`                | `#63636D`             | Secondary body text and labels                           |
+| `--ink-400`                | `#9C9CA4`             | Muted metadata and placeholders                          |
+| `--accent`                 | `#23265C`             | Deep ink-indigo (wordmark, primary buttons, focus rings) |
+| `--accent-tint`            | `#EEEEF5`             | 6% accent tint for active navigation states              |
+| `--allow` / `--allow-bg`   | `#227A4E` / `#EAF6EE` | Allow status badge & toast icon                          |
+| `--verify` / `--verify-bg` | `#A8720F` / `#FBF1DF` | Verify step-up challenge                                 |
+| `--hold` / `--hold-bg`     | `#B0591F` / `#FBEEE1` | Under review hold state                                  |
+| `--block` / `--block-bg`   | `#A93434` / `#FAEAEA` | Severe block state & form errors                         |
 
 ### Typography Rules
 
 - **Playfair Display**: Used exclusively for:
-  1. The wordmark *"Latchpoint"* (600, 20px)
+  1. The wordmark _"Latchpoint"_ (600, 20px)
   2. Landing page hero headline (600, 40px/48px)
   3. Primary page titles `<h1>` (600, 28px/36px)
-  4. Pre-Commitment Gate verdict line (*"Before you continue"* / *"Verify it's you"*, 500, 22px/30px)
+  4. Pre-Commitment Gate verdict line (_"Before you continue"_ / _"Verify it's you"_, 500, 22px/30px)
 - **Montserrat**: Powers 95%+ of the interface:
   - Body copy: 400, 16px/24px
   - Form labels: 500, 14px/20px
@@ -178,12 +179,14 @@ Latchpoint avoids brittle static rules by continuously evaluating a user's perso
 All endpoints are hosted under `/api`. Protected routes require `Authorization: Bearer <token>`.
 
 ### Authentication
+
 - `POST /api/auth/demo-login` — Issues a JWT for `demo@latchpoint.app` without password entry.
 - `POST /api/auth/login` — Standard credential sign-in (`{ email, password }`).
 - `POST /api/auth/register` — User account creation.
 - `GET /api/users/me` — Fetches current user profile, balance, and demo status flag.
 
 ### Transaction Lifecycle & Pre-Commitment Gate
+
 - `POST /api/transactions/prepare` — Stages a transaction (`status: draft`). Balance is untouched.
 - `POST /api/risk/evaluate/{id}` — Evaluates behavioral context. Returns `{ risk_score, decision, reasons, top_features }` and updates status to `allowed`, `verifying`, `held`, or `blocked`.
 - `POST /api/transactions/{id}/step-up/verify` — Validates 6-digit OTP for transactions awaiting verification.
@@ -192,6 +195,7 @@ All endpoints are hosted under `/api`. Protected routes require `Authorization: 
 - `GET /api/transactions` — Retrieves paginated transaction history with optional status filter.
 
 ### Telemetry & Compliance
+
 - `POST /api/events` — Ingests client behavioral events (page views, field edits, idle pauses).
 - `GET /api/payees` — Lists saved payees for the authenticated user.
 - `POST /api/payees` — Adds a new counterparty payee.
