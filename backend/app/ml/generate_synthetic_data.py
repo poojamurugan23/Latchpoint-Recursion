@@ -136,7 +136,11 @@ def generate_user_rows(user_id: int, global_payee_counter: list[int]) -> list[di
         # --- NETWORK: payment to a payee sharing a device with 2+ other payees ---
         if shared_cluster and 0.09 <= pattern_roll < 0.22:
             payee_id = random.choice(shared_cluster)
-            amt = max(50.0, np.random.normal(personal_mean, personal_std))
+            # Moderately elevated (not drift-scale) so the model learns
+            # device-sharing co-occurring with an above-typical amount as the
+            # network signal, rather than device-sharing alone (which also
+            # shows up harmlessly whenever a regular clustered payee is paid).
+            amt = personal_mean * random.uniform(1.8, 3.0)
             hour = random.randint(hour_low, hour_high)
             day_totals[day] = day_totals.get(day, 0.0) + amt
             day_counts[day] = day_counts.get(day, 0) + 1
