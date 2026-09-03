@@ -27,10 +27,17 @@ def main():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    # Regularized deliberately: an over-separated model collapses every
+    # decision into ALLOW-or-BLOCK with no VERIFY/HOLD gray zone, defeating
+    # the point of a 4-tier gate.
     model = XGBClassifier(
-        n_estimators=200,
-        max_depth=4,
-        learning_rate=0.1,
+        n_estimators=80,
+        max_depth=3,
+        learning_rate=0.08,
+        min_child_weight=20,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        reg_lambda=5.0,
         eval_metric="logloss",
         random_state=42,
     )
