@@ -66,3 +66,52 @@ export const api = {
   post: (path, body) => request(path, { method: 'POST', body }),
   patch: (path, body) => request(path, { method: 'PATCH', body }),
 }
+
+/**
+ * Reads an SSE stream via fetch (not the native EventSource, which can't
+ * carry the Authorization/X-Session-Id/X-Device-Fingerprint headers this API
+ * requires). Calls onEvent({ event, data }) for each frame as it arrives.
+ */
+export async function streamGet(path, onEvent) {
+  const token = getToken()
+  const res = await fetch(`/api${path}`, {
+    headers: {
+      'X-Session-Id': sessionId,
+      'X-Device-Fingerprint': deviceFingerprint,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (!res.ok || !res.body) {
+    throw new Error(`Stream request failed: ${res.status}`)
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+
+    let boundary
+    while ((boundary = buffer.indexOf('\n\n')) !== -1) {
+      const frame = buffer.slice(0, boundary)
+      buffer = buffer.slice(boundary + 2)
+
+      let event = 'message'
+      let data = ''
+      for (const line of frame.split('\n')) {
+        if (line.startsWith('event:')) event = line.slice(6).trim()
+        else if (line.startsWith('data:')) data += line.slice(5).trim()
+      }
+      if (data) {
+        try {
+          onEvent({ event, data: JSON.parse(data) })
+        } catch {
+          // ignore malformed frame
+        }
+      }
+    }
+  }
+}
