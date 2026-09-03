@@ -55,7 +55,7 @@ def _evaluate_and_persist(db: Session, current_user: User, user_session: UserSes
     explain_ctx = {**context["features"], "mean_amount": context["mean_amount"]}
     reasons, top_features = explanation.explain(shap_by_feature, explain_ctx)
 
-    decision = decision_engine.decide(risk_score, context)
+    decision, risk_score = decision_engine.evaluate_decision(risk_score, context)
     new_status = decision_engine.STATUS_FOR_DECISION[decision]
 
     txn.risk_score = risk_score
@@ -178,7 +178,7 @@ def evaluate_stream(
             risk_score, shap_by_feature = risk_model.score(context["features"])
             explain_ctx = {**context["features"], "mean_amount": context["mean_amount"]}
             reasons, top_features = explanation.explain(shap_by_feature, explain_ctx)
-            decision = decision_engine.decide(risk_score, context)
+            decision, risk_score = decision_engine.evaluate_decision(risk_score, context)
             new_status = decision_engine.STATUS_FOR_DECISION[decision]
 
             txn.risk_score = risk_score

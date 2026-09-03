@@ -1,12 +1,13 @@
 """Seeds demo user and scenario data (spec §11).
 
-Idempotent: if demo@latchpoint.app already exists, skips gracefully. Run any
-time with:
-    python seed_demo_data.py
+Idempotent: skips seeding if the demo user already exists.
+Run from backend/: python seed_demo_data.py
 """
 
-from datetime import datetime, timezone, timedelta
-from app.database import SessionLocal
+from datetime import datetime, timedelta, timezone
+
+from app.database import Base, engine, SessionLocal
+from app import models  # noqa: F401
 from app.models.user import User
 from app.models.account import Account
 from app.models.payee import Payee
@@ -19,31 +20,37 @@ DEMO_EMAIL = "demo@latchpoint.app"
 DEMO_PASSWORD = "demo1234"
 
 
-def _completed_txn(user_id, txn_type, amount, payee_id=None, symbol=None, days_ago=0, hour=12, outcome="neutral"):
-    created = datetime.now(timezone.utc) - timedelta(days=days_ago)
-    created = created.replace(hour=hour, minute=0, second=0, microsecond=0)
+def _completed_txn(user_id, type_, amount, payee_id=None, symbol=None, days_ago=0, hour=10, outcome=None):
+    created_at = datetime.now(timezone.utc) - timedelta(days=days_ago)
+    created_at = created_at.replace(hour=hour, minute=0, second=0, microsecond=0)
     return Transaction(
         user_id=user_id,
-        type=txn_type,
+        session_id=None,
+        type=type_,
         amount=amount,
         payee_id=payee_id,
         symbol=symbol,
-        status="completed",
+        risk_score=0.08,
         decision="ALLOW",
+        reasons=["Baseline historical transaction."],
+        status="completed",
         outcome=outcome,
-        created_at=created,
-        confirmed_at=created + timedelta(seconds=20),
+        created_at=created_at,
+        confirmed_at=created_at + timedelta(seconds=15),
     )
 
 
 def main():
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
+
     try:
         existing = db.query(User).filter(User.email == DEMO_EMAIL).first()
         if existing:
             print(f"Demo user {DEMO_EMAIL} already exists — skipping seed.")
             return
 
+        # 1. Create demo user
         user = User(
             name="Demo User",
             email=DEMO_EMAIL,
@@ -52,16 +59,28 @@ def main():
         db.add(user)
         db.flush()
 
-        checking = Account(user_id=user.id, balance=250000.0, account_type="checking")
-        db.add(checking)
+        # 2. Checking account with starting balance
+        account = Account(
+            user_id=user.id,
+            account_type="checking",
+            balance=250000.0,
+        )
+        db.add(account)
         db.flush()
 
-        # Regular payees
-        payee_rent = Payee(user_id=user.id, name="Rent - Sunview Apartments", masked_account_number="****4812", is_trusted=True)
-        payee_internet = Payee(user_id=user.id, name="FiberNet Broadband", masked_account_number="****2209", is_trusted=True)
-        payee_groceries = Payee(user_id=user.id, name="FreshMart Groceries", masked_account_number="****6701", is_trusted=True)
-        payee_utilities = Payee(user_id=user.id, name="City Electric & Water", masked_account_number="****1143", is_trusted=True)
-
+        # 3. Known payees
+        payee_rent = Payee(
+            user_id=user.id, name="Rent - Sunview Apartments", masked_account_number="****4812", is_trusted=True
+        )
+        payee_internet = Payee(
+            user_id=user.id, name="FiberNet Broadband", masked_account_number="****2209", is_trusted=True
+        )
+        payee_groceries = Payee(
+            user_id=user.id, name="FreshMart Groceries", masked_account_number="****6701", is_trusted=True
+        )
+        payee_utilities = Payee(
+            user_id=user.id, name="City Electric & Water", masked_account_number="****1143", is_trusted=True
+        )
         for p in [payee_rent, payee_internet, payee_groceries, payee_utilities]:
             db.add(p)
         db.flush()

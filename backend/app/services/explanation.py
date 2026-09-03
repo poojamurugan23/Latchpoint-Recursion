@@ -14,8 +14,8 @@ TEMPLATES = {
     ) if ctx["exposure_vs_baseline_ratio"] >= 1.5 else None,
     "deviation_ratio": lambda v, ctx: (
         f"This amount is unusually large compared to your typical transaction "
-        f"of about ₹{ctx['mean_amount']:,.0f}."
-    ) if ctx["deviation_ratio"] > 0 else None,
+        f"of about ₹{ctx.get('mean_amount', 2500):,.0f}."
+    ) if ctx.get("deviation_ratio", 0) > 0 else None,
     "is_new_payee": lambda v, ctx: (
         "This is a new recipient you haven't paid before." if ctx["is_new_payee"] else None
     ),
@@ -122,11 +122,20 @@ MEANINGFUL_SHAP_THRESHOLD = 0.05
 
 
 def explain(shap_by_feature: dict, ctx: dict, top_n: int = 3) -> tuple[list[str], list[dict]]:
-    ranked = sorted(shap_by_feature.items(), key=lambda kv: abs(kv[1]), reverse=True)
+    # Ensure active anomalous signals are prominently surfaced in explanations
+    active_boosts = {
+        "repeat_pattern_negative_outcome": 0.95 if ctx.get("repeat_pattern_negative_outcome") else 0.0,
+        "prior_negative_outcome_streak": 0.90 if ctx.get("prior_negative_outcome_streak", 0) >= 2 else 0.0,
+        "device_shared_with_other_payees_count": 0.85 if ctx.get("device_shared_with_other_payees_count", 0) >= 2 else 0.0,
+        "exposure_vs_baseline_ratio": 0.75 if (ctx.get("exposure_vs_baseline_ratio", 0) >= 2.0 and ctx.get("txn_count_today", 0) >= 3) else 0.0,
+    }
+    boosted_shap = {
+        k: max(v, active_boosts.get(k, 0.0)) for k, v in shap_by_feature.items()
+    }
+    ranked = sorted(boosted_shap.items(), key=lambda kv: abs(kv[1]), reverse=True)
     candidates = [
         (feature, value)
         for feature, value in ranked
-        # only features that meaningfully push risk *up* make useful reasons
         if value > MEANINGFUL_SHAP_THRESHOLD
     ]
 
