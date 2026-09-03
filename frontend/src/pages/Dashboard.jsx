@@ -16,9 +16,11 @@ export default function Dashboard() {
     api.get('/transactions?limit=5').then(setTransactions)
   }, [])
 
-  const today = new Date().toDateString()
+  // Backend timestamps are naive UTC ("no Z" suffix); comparing raw date
+  // prefixes avoids the browser reinterpreting them as local time.
+  const todayUtc = new Date().toISOString().slice(0, 10)
   const exposureToday = transactions
-    .filter((t) => t.status === 'completed' && new Date(t.created_at).toDateString() === today)
+    .filter((t) => t.status === 'completed' && t.created_at.slice(0, 10) === todayUtc)
     .reduce((sum, t) => sum + t.amount, 0)
 
   const baseline = 5000
