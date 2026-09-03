@@ -31,5 +31,15 @@ def post_events(
                 payload=item.payload,
             )
         )
+        # Geolocation lands on the session row itself (not just the event
+        # log) — feature_engine reads UserSession.latitude/longitude, since
+        # a location belongs to the session, not to any one transaction.
+        if item.event_type == "geolocation_captured":
+            lat, lon = item.payload.get("latitude"), item.payload.get("longitude")
+            if lat is not None and lon is not None:
+                user_session.latitude = lat
+                user_session.longitude = lon
+                user_session.location_source = item.payload.get("source", "gps")
+
     db.commit()
     return None
