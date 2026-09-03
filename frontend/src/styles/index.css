@@ -3,32 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #FAFAF9;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F4F3F1;
-  --color-border: #E8E6E1;
-  --color-text-primary: #1C1B1A;
-  --color-text-secondary: #6B6963;
-  --color-text-tertiary: #A6A49E;
+  --bg: #FFFFFF;
+  --bg-subtle: #FAFAFA;
+  --surface: #FFFFFF;
+  --border: #EBEBEE;
+  --border-strong: #DCDCE2;
 
-  --color-accent: #C96442;
-  --color-accent-hover: #B5573A;
+  --ink-900: #14141B;
+  --ink-600: #63636D;
+  --ink-400: #9C9CA4;
 
-  --color-allow: #3A8A4A;
-  --color-allow-bg: #EDF5EE;
-  --color-verify: #C98A2E;
-  --color-verify-bg: #FBF3E6;
-  --color-hold: #C9622E;
-  --color-hold-bg: #FBEFE6;
-  --color-block: #B3402F;
-  --color-block-bg: #FAECE9;
+  --accent: #23265C;
+  --accent-hover: #191B45;
+  --accent-tint: #EEEEF5;
+  --accent-2: #C96442;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --allow: #227A4E;
+  --allow-bg: #EAF6EE;
+  --verify: #A8720F;
+  --verify-bg: #FBF1DF;
+  --hold: #B0591F;
+  --hold-bg: #FBEEE1;
+  --block: #A93434;
+  --block-bg: #FAEAEA;
+
+  --shadow-sm: 0 1px 2px rgba(20,20,27,0.04);
+  --shadow-md: 0 8px 24px rgba(20,20,27,0.08);
+  --shadow-lg: 0 24px 64px rgba(20,20,27,0.14);
 
   color-scheme: light;
 }
@@ -39,10 +40,11 @@
 
 body {
   margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--ink-900);
+  font-family: 'Montserrat', system-ui, sans-serif;
   line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
 }
 
 button, input, select, textarea {
@@ -51,4 +53,66 @@ button, input, select, textarea {
 
 button {
   cursor: pointer;
+}
+
+/* Focus ring — replaces browser default on all interactive elements */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #EBEBEE 25%, #F5F5F7 50%, #EBEBEE 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Fine dot-grid backdrop used behind the Landing hero and empty states */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, #E3E3EA 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Soft directional glow used behind hero art / modals for depth */
+.bg-mesh {
+  background:
+    radial-gradient(600px circle at 15% 0%, rgba(35,38,92,0.06), transparent 60%),
+    radial-gradient(500px circle at 100% 20%, rgba(201,100,66,0.05), transparent 55%);
+}
+
+/* Thin animated progress fill used by the staged-analysis checklist */
+@keyframes grow-width {
+  from { width: 0%; }
+}
+.animate-grow {
+  animation: grow-width 900ms cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Custom scrollbar — subtle, matches ink palette */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-400);
 }
