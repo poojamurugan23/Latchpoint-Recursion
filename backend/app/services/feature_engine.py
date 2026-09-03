@@ -4,6 +4,7 @@ list). Runs fresh on every /api/risk/evaluate call; nothing here is cached
 beyond the request, since the window shifts with every completed
 transaction."""
 
+import math
 from datetime import datetime, timezone
 
 import numpy as np
@@ -17,6 +18,25 @@ from app.models.device import Device
 
 WINDOW_SIZE = 10
 ODD_HOUR_BUFFER = 2
+NEW_LOCATION_THRESHOLD_KM = 50.0
+
+# Neutral human-like defaults used when telemetry wasn't captured for this
+# session (e.g. a direct API call, or a browser that never fired behavioral
+# events) — matches the "clean" distribution used in training so missing
+# telemetry never reads as automation/coercion on its own.
+DEFAULT_CONFIRM_HOVER_MS = 800.0
+DEFAULT_MOUSE_DIRECTION_CHANGES = 8
+DEFAULT_IDLE_MS_BEFORE_CONFIRM = 1200.0
+DEFAULT_KEYSTROKE_INTERVAL_STD = 60.0
+
+
+def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    radius_km = 6371.0
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
+    return 2 * radius_km * math.asin(math.sqrt(a))
 
 _population_baseline_cache: dict | None = None
 
@@ -217,6 +237,74 @@ def build_commitment_context(
             break
     repeat_pattern_negative_outcome = int(prior_negative_outcome_streak >= 3)
 
+    # --- behavioral biometrics (Phase 3 §3) ---
+    confirm_hover_events = [e for e in session_events if e.event_type == "confirm_hover"]
+    confirm_hover_ms = (
+        float(confirm_hover_events[-1].payload.get("hover_ms_before_click", DEFAULT_CONFIRM_HOVER_MS))
+        if confirm_hover_events
+        else DEFAULT_CONFIRM_HOVER_MS
+    )
+
+    mouse_summary_events = [e for e in session_events if e.event_type == "mouse_summary"]
+    if mouse_summary_events:
+        mouse_direction_changes = sum(
+            int(e.payload.get("direction_change_count", 0)) for e in mouse_summary_events
+        )
+        idle_ms_before_confirm = float(
+            mouse_summary_events[-1].payload.get("idle_ms_before_action", DEFAULT_IDLE_MS_BEFORE_CONFIRM)
+        )
+    else:
+        mouse_direction_changes = DEFAULT_MOUSE_DIRECTION_CHANGES
+        idle_ms_before_confirm = DEFAULT_IDLE_MS_BEFORE_CONFIRM
+
+    keystroke_events = [
+        e
+        for e in session_events
+        if e.event_type == "keystroke_timing" and e.payload.get("field") == "amount"
+    ]
+    keystroke_interval_std = (
+        float(keystroke_events[-1].payload.get("std_interval_ms", DEFAULT_KEYSTROKE_INTERVAL_STD))
+        if keystroke_events
+        else DEFAULT_KEYSTROKE_INTERVAL_STD
+    )
+
+    location_deviation_km = 0.0
+    is_new_location = 0
+    if user_session is not None and user_session.latitude is not None and user_session.longitude is not None:
+        prior_points = (
+            db.query(UserSession.latitude, UserSession.longitude)
+            .join(Transaction, Transaction.session_id == UserSession.id)
+            .filter(
+                Transaction.user_id == user_id,
+                Transaction.status == "completed",
+                UserSession.latitude.isnot(None),
+                UserSession.longitude.isnot(None),
+                UserSession.id != user_session.id,
+            )
+            .all()
+        )
+        if prior_points:
+            location_deviation_km = min(
+                _haversine_km(user_session.latitude, user_session.longitude, lat, lon)
+                for lat, lon in prior_points
+            )
+            is_new_location = int(location_deviation_km > NEW_LOCATION_THRESHOLD_KM)
+
+    is_new_device_session = 0
+    if user_session is not None and user_session.device_id is not None:
+        prior_device_txn = (
+            db.query(Transaction)
+            .join(UserSession, Transaction.session_id == UserSession.id)
+            .filter(
+                Transaction.user_id == user_id,
+                Transaction.status == "completed",
+                UserSession.device_id == user_session.device_id,
+            )
+            .first()
+        )
+        is_new_device_session = int(prior_device_txn is None)
+    device_and_location_mismatch = int(bool(is_new_device_session) and bool(is_new_location))
+
     features = {
         "deviation_ratio": deviation_ratio,
         "is_new_payee": is_new_payee,
@@ -234,6 +322,13 @@ def build_commitment_context(
         "ip_is_vpn_or_proxy": ip_is_vpn_or_proxy,
         "repeat_pattern_negative_outcome": repeat_pattern_negative_outcome,
         "prior_negative_outcome_streak": prior_negative_outcome_streak,
+        "confirm_hover_ms": confirm_hover_ms,
+        "mouse_direction_changes": mouse_direction_changes,
+        "idle_ms_before_confirm": idle_ms_before_confirm,
+        "keystroke_interval_std": keystroke_interval_std,
+        "location_deviation_km": location_deviation_km,
+        "is_new_location": is_new_location,
+        "device_and_location_mismatch": device_and_location_mismatch,
     }
 
     return {

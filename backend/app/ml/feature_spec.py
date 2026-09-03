@@ -19,4 +19,13 @@ FEATURE_COLUMNS = [
     "ip_is_vpn_or_proxy",
     "repeat_pattern_negative_outcome",
     "prior_negative_outcome_streak",
+
+    # behavioral biometrics (Phase 3 §3)
+    "confirm_hover_ms",
+    "mouse_direction_changes",
+    "idle_ms_before_confirm",
+    "keystroke_interval_std",
+    "location_deviation_km",
+    "is_new_location",
+    "device_and_location_mismatch",
 ]

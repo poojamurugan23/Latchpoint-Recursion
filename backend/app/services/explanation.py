@@ -81,6 +81,40 @@ TEMPLATES = {
         if ctx["prior_negative_outcome_streak"] >= 1
         else None
     ),
+    "confirm_hover_ms": lambda v, ctx: (
+        "This was confirmed almost instantly, without the pause we'd typically expect."
+        if ctx["confirm_hover_ms"] < 150
+        else None
+    ),
+    "mouse_direction_changes": lambda v, ctx: (
+        "The on-screen movement before this was confirmed looked more scripted than natural."
+        if ctx["mouse_direction_changes"] <= 1
+        else None
+    ),
+    "idle_ms_before_confirm": lambda v, ctx: (
+        "There was almost no pause before this was confirmed."
+        if ctx["idle_ms_before_confirm"] < 200
+        else None
+    ),
+    "keystroke_interval_std": lambda v, ctx: (
+        "The typing pattern for this amount was unusually uniform for manual entry."
+        if ctx["keystroke_interval_std"] < 15
+        else None
+    ),
+    "location_deviation_km": lambda v, ctx: (
+        f"This session is coming from about {ctx['location_deviation_km']:,.0f} km away from "
+        f"where you usually transact."
+        if ctx["location_deviation_km"] > 50
+        else None
+    ),
+    "is_new_location": lambda v, ctx: (
+        "You're transacting from a location we haven't seen before." if ctx["is_new_location"] else None
+    ),
+    "device_and_location_mismatch": lambda v, ctx: (
+        "This is both a new device and a new location — a combination we haven't seen for you before."
+        if ctx["device_and_location_mismatch"]
+        else None
+    ),
 }
 
 
