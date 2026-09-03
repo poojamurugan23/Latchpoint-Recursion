@@ -110,10 +110,12 @@ def main():
         db.commit()
 
         print(f"Seeded demo user: {DEMO_EMAIL} / {DEMO_PASSWORD}")
-        print(f"  Trusted payee (clean scenario): id={payee_rent.id} '{payee_rent.name}'")
-        print(f"  Network-cluster payee (network scenario): id={payee_network_target.id} '{payee_network_target.name}'")
-        print(f"  Repeat-loss symbol (repeat-loss scenario): '{loss_symbol}'")
-        print("  3 same-day transfers already made today -> submit a 4th to trigger drift.")
+        print()
+        print("Live demo scenarios to run through the UI:")
+        print(f"  CLEAN:       transfer ~₹1,900 to '{payee_rent.name}' -> expect ALLOW")
+        print(f"  DRIFT:       transfer ~₹5,500 to '{payee_rent.name}' (4th transfer today) -> expect HOLD")
+        print(f"  NETWORK:     transfer ~₹3,500 to '{payee_network_target.name}' -> expect VERIFY/HOLD")
+        print(f"  REPEAT-LOSS: trade ~₹9,500 on symbol '{loss_symbol}' -> expect BLOCK")
     finally:
         db.close()
 
