@@ -22,4 +22,7 @@ def get_me(current_user: User = Depends(get_current_user), db: Session = Depends
         created_at=current_user.created_at,
         balance=account.balance if account else 0.0,
         is_demo=current_user.email == DEMO_EMAIL,
+        calibration_status=current_user.calibration_status,
+        calibrated_txn_count=current_user.calibrated_txn_count,
+        baseline_snapshot=current_user.baseline_snapshot,
     )

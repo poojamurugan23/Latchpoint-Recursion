@@ -14,6 +14,7 @@ from app.models.payee import Payee
 from app.models.device import Device
 from app.models.transaction import Transaction
 from app.security import hash_password
+from app.services.feature_engine import materialize_baseline_snapshot
 
 DEMO_EMAIL = "demo@latchpoint.app"
 DEMO_PASSWORD = "demo1234"
@@ -109,6 +110,14 @@ def main():
                 )
             )
 
+        db.commit()
+
+        # The demo user starts with a full transaction history already on
+        # record, so they should never see the calibration flow (Phase 3
+        # §1) — skip straight to "active" with a materialized baseline.
+        user.calibration_status = "active"
+        user.calibrated_txn_count = 10
+        user.baseline_snapshot = materialize_baseline_snapshot(db, user.id)
         db.commit()
 
         print(f"Seeded demo user: {DEMO_EMAIL} / {DEMO_PASSWORD}")
