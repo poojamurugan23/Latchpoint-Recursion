@@ -23,7 +23,15 @@ cd ../frontend
 npm install
 ```
 
-## Running it (two commands)
+## Running it
+
+Run both frontend and backend concurrently from the root directory with a single command:
+
+```bash
+npm run dev
+```
+
+Or run them individually in separate terminals:
 
 ```bash
 # Terminal 1 — backend, from backend/
