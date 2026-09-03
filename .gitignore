@@ -1,0 +1,12 @@
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/app/ml/synthetic_transactions.csv
+backend/app/ml/model_artifact.pkl
+*.pyc
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

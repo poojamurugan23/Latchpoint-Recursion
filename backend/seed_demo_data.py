@@ -55,7 +55,8 @@ def main():
         payee_rent = Payee(user_id=user.id, name="Rent - Sunview Apartments", masked_account_number="****4471", is_trusted=True)
         payee_utilities = Payee(user_id=user.id, name="City Power & Utilities", masked_account_number="****2290", is_trusted=True)
         payee_groceries = Payee(user_id=user.id, name="FreshMart Groceries", masked_account_number="****8823", is_trusted=True)
-        db.add_all([payee_rent, payee_utilities, payee_groceries])
+        payee_internet = Payee(user_id=user.id, name="FiberNet Broadband", masked_account_number="****3360", is_trusted=True)
+        db.add_all([payee_rent, payee_utilities, payee_groceries, payee_internet])
         db.flush()
 
         # --- 10 clean historical transactions -> baseline_confidence: high ---
@@ -97,6 +98,7 @@ def main():
         # --- clean/trusted-payee transactions for the ALLOW denominator ---
         db.add(_completed_txn(user.id, "transfer", 2000, payee_id=payee_rent.id, days_ago=2, hour=9, outcome="neutral"))
         db.add(_completed_txn(user.id, "transfer", 1950, payee_id=payee_rent.id, days_ago=1, hour=10, outcome="neutral"))
+        db.add(_completed_txn(user.id, "transfer", 900, payee_id=payee_internet.id, days_ago=3, hour=11, outcome="neutral"))
 
         # --- DRIFT scenario setup: 3 same-day small transfers already made today ---
         for i in range(3):
