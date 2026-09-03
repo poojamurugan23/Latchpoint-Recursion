@@ -27,7 +27,7 @@ export default function Trade() {
 
   useEffect(() => {
     trackEvent('page_view', { path: '/trade' })
-  }, [])
+  }, [trackEvent])
 
   function handleReview(e) {
     e.preventDefault()
@@ -84,7 +84,9 @@ export default function Trade() {
   return (
     <Layout>
       <div className="max-w-md">
-        <h1 className="text-xl font-semibold text-text-primary mb-6">Place a trade</h1>
+        <h1 className="font-display text-title font-semibold text-ink-900 mb-8">
+          Place a trade
+        </h1>
 
         {step === 'form' && (
           <Card>
@@ -123,26 +125,26 @@ export default function Trade() {
           <Card>
             <button
               onClick={handleBackToEdit}
-              className="flex items-center gap-1 text-sm text-text-secondary hover:text-text-primary mb-5 transition-colors duration-150 ease-out"
+              className="flex items-center gap-1 text-secondary text-ink-600 hover:text-ink-900 mb-6 transition-colors duration-[120ms] ease-out"
             >
-              <ChevronLeft size={16} /> Edit
+              <ChevronLeft size={16} /> Back to details
             </button>
 
-            <div className="flex flex-col gap-3 mb-6">
-              <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Symbol</span>
-                <span className="text-text-primary font-medium">{symbol}</span>
+            <div className="flex flex-col gap-4 mb-8">
+              <div className="flex justify-between items-center text-secondary border-b border-border pb-3">
+                <span className="text-ink-600">Instrument</span>
+                <span className="text-ink-900 font-semibold">{symbol}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Amount</span>
-                <span className="text-text-primary font-medium">
+              <div className="flex justify-between items-center text-secondary">
+                <span className="text-ink-600">Order value</span>
+                <span className="text-ink-900 font-semibold">
                   ₹{parseFloat(amount || 0).toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
 
             <Button onClick={handleConfirm} disabled={submitting} className="w-full">
-              {submitting ? 'Checking…' : 'Confirm'}
+              {submitting ? 'Evaluating risk…' : 'Confirm commitment'}
             </Button>
           </Card>
         )}

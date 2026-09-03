@@ -31,7 +31,7 @@ export default function Transfer() {
   useEffect(() => {
     trackEvent('page_view', { path: '/transfer' })
     api.get('/payees').then(setPayees)
-  }, [])
+  }, [trackEvent])
 
   function handleAmountChange(e) {
     const value = e.target.value
@@ -115,7 +115,9 @@ export default function Transfer() {
   return (
     <Layout>
       <div className="max-w-md">
-        <h1 className="text-xl font-semibold text-text-primary mb-6">Transfer money</h1>
+        <h1 className="font-display text-title font-semibold text-ink-900 mb-8">
+          Transfer money
+        </h1>
 
         {step === 'form' && (
           <Card>
@@ -132,12 +134,12 @@ export default function Transfer() {
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm text-text-secondary">Payee</label>
+                <label className="text-secondary font-medium text-ink-600">Payee</label>
                 <select
                   value={payeeId}
                   onFocus={() => trackEvent('field_focus', { field_name: 'payee' })}
                   onChange={handlePayeeSelect}
-                  className="w-full rounded-sm border border-border bg-surface px-3.5 py-2.5 text-base text-text-primary outline-none focus:border-accent transition-colors duration-150 ease-out"
+                  className="w-full rounded-[10px] border border-border bg-white px-3 py-3 text-body text-ink-900 outline-none transition-all duration-[120ms] ease-out focus:border-accent focus:shadow-[0_0_0_3px_rgba(35,38,92,0.08)]"
                   required
                 >
                   <option value="" disabled>
@@ -159,7 +161,7 @@ export default function Transfer() {
                     onChange={(e) => setNewPayeeName(e.target.value)}
                     className="flex-1"
                   />
-                  <Button type="button" variant="ghost" onClick={handleAddPayee}>
+                  <Button type="button" variant="secondary" onClick={handleAddPayee}>
                     Add
                   </Button>
                 </div>
@@ -167,7 +169,7 @@ export default function Transfer() {
                 <button
                   type="button"
                   onClick={() => setAddingPayee(true)}
-                  className="text-sm text-accent hover:text-accent-hover text-left transition-colors duration-150 ease-out"
+                  className="text-secondary font-medium text-accent hover:text-accent-hover text-left transition-colors duration-[120ms] ease-out"
                 >
                   + Add a new payee
                 </button>
@@ -184,26 +186,32 @@ export default function Transfer() {
           <Card>
             <button
               onClick={handleBackToEdit}
-              className="flex items-center gap-1 text-sm text-text-secondary hover:text-text-primary mb-5 transition-colors duration-150 ease-out"
+              className="flex items-center gap-1 text-secondary text-ink-600 hover:text-ink-900 mb-6 transition-colors duration-[120ms] ease-out"
             >
-              <ChevronLeft size={16} /> Edit
+              <ChevronLeft size={16} /> Back to details
             </button>
 
-            <div className="flex flex-col gap-3 mb-6">
-              <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Amount</span>
-                <span className="text-text-primary font-medium">
+            <div className="flex flex-col gap-4 mb-8">
+              <div className="flex justify-between items-center text-secondary border-b border-border pb-3">
+                <span className="text-ink-600">Amount</span>
+                <span className="text-ink-900 font-semibold">
                   ₹{parseFloat(amount || 0).toLocaleString('en-IN')}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">To</span>
-                <span className="text-text-primary font-medium">{selectedPayee?.name}</span>
+              <div className="flex justify-between items-center text-secondary border-b border-border pb-3">
+                <span className="text-ink-600">Recipient</span>
+                <span className="text-ink-900 font-semibold">{selectedPayee?.name}</span>
+              </div>
+              <div className="flex justify-between items-center text-secondary">
+                <span className="text-ink-600">Account</span>
+                <span className="text-ink-600 font-mono text-caption">
+                  {selectedPayee?.masked_account_number}
+                </span>
               </div>
             </div>
 
             <Button onClick={handleConfirm} disabled={submitting} className="w-full">
-              {submitting ? 'Checking…' : 'Confirm'}
+              {submitting ? 'Evaluating risk…' : 'Confirm commitment'}
             </Button>
           </Card>
         )}
