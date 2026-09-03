@@ -26,9 +26,28 @@ export default function Dashboard() {
   const baseline = 5000
   const exposureRatio = Math.min(exposureToday / baseline, 1)
   const isElevated = exposureToday > baseline * 2
+  const isCalibrating = user?.calibration_status === 'calibrating'
 
   return (
     <Layout>
+      {isCalibrating && (
+        <Card className="mb-6">
+          <p className="text-xs tracking-wide text-text-secondary mb-3">
+            Pattern calibration — {user.calibrated_txn_count} of 10 transactions
+          </p>
+          <div className="flex gap-1.5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full transition-colors duration-200 ease-out ${
+                  i < user.calibrated_txn_count ? 'bg-accent' : 'border border-border'
+                }`}
+              />
+            ))}
+          </div>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card className="md:col-span-1">
           <p className="text-sm text-text-secondary mb-1">Balance</p>
